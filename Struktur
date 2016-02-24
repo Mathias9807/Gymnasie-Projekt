@@ -1,4 +1,19 @@
-Main.c:main
+Källkods filer:
+	SYS_main:	Innehåller system funktioner, t.ex funktioner
+				för att öppna fönster och läsa av skrivbordet
+	
+	V_main:		Tar hand om renderingen och skickar data till
+				grafikkortet. 
+	
+	G_main:		Styr själva spelet och fysiken när saker rör
+				sig. 
+
+	SYS_audio:	Laddar och spelar upp ljud. 
+
+	SYS_input:	Läser tangentbordet och ger en abstraktion av
+				kontrollerna.
+
+SYS_main.c:main
 Programmet startar
 
 Öppna ett fönster
@@ -15,3 +30,5 @@ Huvudloopen startar
 
 Stäng ner allt
 Programmet avslutar
+
+
