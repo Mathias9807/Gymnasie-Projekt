@@ -1,0 +1,17 @@
+Main.c:main
+Programmet startar
+
+Öppna ett fönster
+Starta OpenGL
+Ladda resurser
+
+Huvudloopen startar
+	Räkna ut 'delta', tiden som har gått sedan förra loopen
+
+	Uppdatera spellogiken
+
+	Uppdatera grafiken
+	Uppdatera skärmen
+
+Stäng ner allt
+Programmet avslutar
