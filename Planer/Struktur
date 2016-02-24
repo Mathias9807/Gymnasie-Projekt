@@ -1,0 +1,37 @@
+Källkods filer:
+	SYS_main:	Innehåller system funktioner, t.ex funktioner
+				för att öppna fönster och läsa av skrivbordet
+	
+	V_main:		Tar hand om renderingen och skickar data till
+				grafikkortet. 
+	
+	G_main:		Styr själva spelet och fysiken när saker rör
+				sig. 
+
+	SYS_audio:	Laddar och spelar upp ljud. 
+
+	SYS_input:	Läser tangentbordet och ger en abstraktion av
+				kontrollerna.
+
+SYS_main.c:main
+Programmet startar
+
+Öppna ett fönster
+Starta OpenGL
+Ladda resurser
+	V_main: Ladda modeller och texturer
+	SYS_audio: Ladda ljud
+
+Huvudloopen startar
+	Räkna ut 'delta', tiden som har gått sedan förra loopen
+
+	Uppdatera spellogiken
+		Läs tangentbordet
+		Kör alla fysik uträkningar
+		Uppdatera menyer
+
+	Uppdatera grafiken
+	Uppdatera skärmen
+
+Stäng ner allt
+Programmet avslutar
