@@ -1,0 +1,7 @@
+Spelet skrivs i C och använder SDL för att få fönster, spela ljud
+och läsa av skrivbordet. OpenGL används för 3D grafiken. För att
+ladda in modellerna används antingen en hemmagjord .OBJ läsare
+eller Assimp. 
+
+Med dessa 'dependencies' kommer spelet kunnas köras på Linux, 
+OS X och Windows utan problem. 
