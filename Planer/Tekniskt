@@ -7,6 +7,13 @@ Med dessa 'dependencies' kommer spelet kunnas köras på Linux,
 OS X och Windows utan problem. 
 
 Tekniska delproblem:
+	Entities
+		Eftersom det troligtvis bara kommer finnas ett fåtal
+		spelare kommer alla skepp nog förvaras i en enkel
+		lista av strukturer. Om det fanns mer variation
+		skulle jag använda ett ordentligt 'Entity Component
+		System' men det behövs inte nu. 
+
 	Kollision
 		Kollision på skepp kommer hanteras enkelt. Skeppen
 		representeras som sfärer vilket gör att kollisioner

@@ -7,15 +7,17 @@
  * (https://opensource.org/licenses/MIT)
  */
 
-#ifndef SYS_MAIN_H
-#define SYS_MAIN_H
+#ifndef G_MAIN_H
+#define G_MAIN_H
 
 
 #include "def.h"
 
-void SYS_Error(char* s);
-void SYS_Warning(char* s);
-void SYS_OpenWindow();
+typedef struct {
+	vec3 pos;
+	vec3 rot;
+} Ship;
+extern List ships;
 
 
-#endif // SYS_MAIN_H
+#endif // G_MAIN_H

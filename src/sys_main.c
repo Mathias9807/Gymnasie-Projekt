@@ -24,13 +24,15 @@ void SYS_Warning(char* s) {
 	printf("A non-fatal error occured: %s\n", s);
 }
 
-void OpenWindow() {
+void SYS_OpenWindow() {
 	// Starta SDL
-	SDL_Init(SDL_INIT_VIDEO);
+	if (SDL_Init(SDL_INIT_VIDEO)) {
+		SYS_Error("Couldn't start SDL");
+	}
 
 	// Öppna ett fönster
 	window = SDL_CreateWindow(
-		"Space", 
+		TITLE " - V" VERSION, 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		V_WIN_WIDTH, V_WIN_HEIGHT, SDL_WINDOW_OPENGL
 	);
@@ -40,9 +42,7 @@ void OpenWindow() {
 }
 
 int main(int argc, char* argv[]) {
-	OpenWindow();
-	V_StartOpenGL();
-	V_LoadResources();
+	V_Init();
 
 	while (!SDL_QuitRequested()) {
 

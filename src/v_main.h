@@ -14,8 +14,8 @@
 #define V_WIN_WIDTH 800
 #define V_WIN_HEIGHT 600
 
-void V_StartOpenGL();
-void V_LoadResources();
+
+void V_Init();
 
 
 #endif // V_MAIN_H

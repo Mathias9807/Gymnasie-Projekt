@@ -4,6 +4,8 @@ Källkods filer:
 	
 	V_main:		Tar hand om renderingen och skickar data till
 				grafikkortet. 
+
+	V_opengl:	Separerar OpenGL anropen från resten av renderingen. 
 	
 	G_main:		Styr själva spelet och fysiken när saker rör
 				sig. 
@@ -35,3 +37,24 @@ Huvudloopen startar
 
 Stäng ner allt
 Programmet avslutar
+
+SYS_input {
+	bool[]	En lista med ett boolean värde för varje knapp
+	float[]	En lista med ett värde i intervallet -1 <= x <= 1
+			Representerar spakar
+	SYS_UpdateInput()
+}
+
+SYS_audio {
+	SYS_LoadSounds() Laddar alla ljud som kommer användas
+	SYS_PlaySound(sound, volume) Spelar det valda ljudet
+}
+
+V_main {
+	V_Init() Laddar grafikresurser och OpenGL
+	V_Tick() Ritar scenen
+}
+
+G_main {
+	G_Tick() Kallar fysik funktionerna och flyttar skeppen
+}
