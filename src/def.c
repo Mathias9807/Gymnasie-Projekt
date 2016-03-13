@@ -1,9 +1,16 @@
-// def.c - Various typedefs and definitions
+/*
+ * Ett tre-dimensionellt rymd spel
+ * 
+ * Copyright (c) 2016 by Mathias Johansson
+ * 
+ * This code is licensed under the MIT license 
+ * (https://opensource.org/licenses/MIT)
+ */
 
 #include "def.h"
 
-void* ListGet(list* l, int index) {
-	listEntry* cur = l->first;
+void* ListGet(List* l, int index) {
+	ListEntry* cur = l->first;
 	int i = 0;
 	
 	if (index < 0) return NULL;
@@ -18,8 +25,8 @@ void* ListGet(list* l, int index) {
 	return NULL;
 }
 
-int ListFind(list* l, void* value) {
-	listEntry* cur = l->first;
+int ListFind(List* l, void* value) {
+	ListEntry* cur = l->first;
 	
 	int index = 0;
 
@@ -33,8 +40,8 @@ int ListFind(list* l, void* value) {
 	return -1;
 }
 
-int ListSize(list* l) {
-	listEntry* cur = l->first;
+int ListSize(List* l) {
+	ListEntry* cur = l->first;
 	int i = 0;
 	
 	while (cur) {
@@ -47,17 +54,17 @@ int ListSize(list* l) {
 	return i;
 }
 
-void ListAdd(list* l, void* value) {
-	listEntry* cur = l->first;
+void ListAdd(List* l, void* value) {
+	ListEntry* cur = l->first;
 	if (cur) {
 		while (cur->next) 
 			cur = cur->next;
-		cur->next = malloc(sizeof(listEntry));
+		cur->next = malloc(sizeof(ListEntry));
 		cur->next->value = value;
 		cur->next->prev = cur;
 		cur->next->next = NULL;
 	}else {
-		l->first = malloc(sizeof(listEntry));
+		l->first = malloc(sizeof(ListEntry));
 		l->first->value = value;
 		l->first->prev = l->first->next = NULL;
 	}
@@ -65,8 +72,8 @@ void ListAdd(list* l, void* value) {
 	l->size++;
 }
 
-void ListRemove(list* l, int index) {
-	listEntry* cur = l->first;
+void ListRemove(List* l, int index) {
+	ListEntry* cur = l->first;
 	int i = 0;
 	
 	if (index < 0) return;

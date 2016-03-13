@@ -7,16 +7,14 @@
  * (https://opensource.org/licenses/MIT)
  */
 
-#ifndef V_MAIN_H
-#define V_MAIN_H
+#include "g_main.h"
 
 
-#define V_WIN_WIDTH 800
-#define V_WIN_HEIGHT 600
+List ships;
 
+void G_InitLevel() {
+}
 
-void V_Init();
-void V_Tick();
+void G_Tick() {
+}
 
-
-#endif // V_MAIN_H

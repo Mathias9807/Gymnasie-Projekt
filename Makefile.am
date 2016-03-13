@@ -4,4 +4,4 @@ AM_CFLAGS = --pedantic -Wall -std=c99 -I./include/ -I./src/ `sdl2-config --cflag
 AM_LDFLAGS = -L./libs/ `sdl2-config --libs` -lGLEW -lGL
 
 bin_PROGRAMS = Space
-Space_SOURCES = ./src/v_opengl.c ./src/def.c ./src/v_main.c ./src/sys_main.c ./src/v_opengl.h ./src/g_main.h ./src/v_main.h ./src/sys_main.h ./src/def.h
+Space_SOURCES = ./src/v_opengl.c ./src/def.c ./src/g_main.c ./src/v_main.c ./src/sys_main.c ./src/v_opengl.h ./src/g_main.h ./src/v_main.h ./src/sys_main.h ./src/def.h

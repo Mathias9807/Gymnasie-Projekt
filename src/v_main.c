@@ -21,3 +21,7 @@ void V_Init() {
 	LoadResources();
 }
 
+void V_Tick() {
+	
+}
+

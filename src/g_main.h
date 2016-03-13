@@ -15,9 +15,11 @@
 
 typedef struct {
 	vec3 pos;
-	vec3 rot;
 } Ship;
 extern List ships;
+
+void G_InitLevel();
+void G_Tick();
 
 
 #endif // G_MAIN_H

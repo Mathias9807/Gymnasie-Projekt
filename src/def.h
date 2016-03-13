@@ -24,16 +24,16 @@
 
 #define PATH_LENGTH 256
 
-typedef struct listEntryStruct {
+typedef struct ListEntryStruct {
 	void* value;
-	struct listEntryStruct* next;
-	struct listEntryStruct* prev;
-} listEntry;
+	struct ListEntryStruct* next;
+	struct ListEntryStruct* prev;
+} ListEntry;
 
 typedef struct {
-	listEntry* first;
+	ListEntry* first;
 	int size;
-} list;
+} List;
 
 typedef struct {
 	int w;			// Dimensions of pixel array
@@ -41,11 +41,11 @@ typedef struct {
 	uint32_t* pix;	// Pixel array in format ARGB
 } sprite;
 
-void* ListGet(list* l, int index);
-int ListFind(list* l, void* value);
-int ListSize(list* l);
-void ListAdd(list* l, void* value);
-void ListRemove(list* l, int index);
+void* ListGet(List* l, int index);
+int ListFind(List* l, void* value);
+int ListSize(List* l);
+void ListAdd(List* l, void* value);
+void ListRemove(List* l, int index);
 
 
 #endif // DEF_H

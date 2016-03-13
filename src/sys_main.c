@@ -12,8 +12,11 @@
 
 #include "sys_main.h"
 #include "v_main.h"
+#include "g_main.h"
 
 SDL_Window* window;
+
+double SYS_dSec;
 
 void SYS_Error(char* s) {
 	printf("A fatal error occured: %s\n", s);
@@ -37,15 +40,27 @@ void SYS_OpenWindow() {
 		V_WIN_WIDTH, V_WIN_HEIGHT, SDL_WINDOW_OPENGL
 	);
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
 	// Starta OpenGL
 	SDL_GL_CreateContext(window);
 }
 
 int main(int argc, char* argv[]) {
 	V_Init();
+	G_InitLevel();
 
+	double now = SDL_GetTicks() / 1000.0;
+	double last = now;
 	while (!SDL_QuitRequested()) {
+		now = SDL_GetTicks() / 1000.0;
+		SYS_dSec = now - last;
+		last = now;
 
+		G_Tick();
+		V_Tick();
 	}
 
 	return 0;
