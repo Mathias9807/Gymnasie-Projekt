@@ -22,6 +22,6 @@ void V_Init() {
 }
 
 void V_Tick() {
-	
+	V_ClearColor(0, 0, 0.4f, 0);
 }
 

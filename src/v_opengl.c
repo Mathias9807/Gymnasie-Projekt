@@ -10,6 +10,7 @@
 #include "sys_main.h"
 #include "v_main.h"
 #include "v_opengl.h"
+#include <GL/glew.h>
 
 
 void V_StartOpenGL() {
@@ -23,5 +24,17 @@ void V_StartOpenGL() {
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
 	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	printf("OpenGL implementation provided by %s\n", glGetString(GL_VENDOR));
+}
+
+void V_ClearColor(float r, float g, float b, float a) {
+	glClearColor(r, g, b, a);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glColor3d(1, 0, 0);
+	glBegin(GL_TRIANGLES);
+	glVertex2d(-1, -1);
+	glVertex2d( 1, -1);
+	glVertex2d( 0,  1);
+	glEnd();
 }
 

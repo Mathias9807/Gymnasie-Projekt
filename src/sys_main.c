@@ -7,6 +7,7 @@
  * (https://opensource.org/licenses/MIT)
  */
 
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -32,6 +33,22 @@ void SYS_Warning(char* s) {
 	printf("A non-fatal error occured: %s\n", s);
 }
 
+void SYS_CheckErrors() {
+	// Decode OpenGL error codes
+	switch (glGetError()) {
+		case GL_NO_ERROR: break;
+		case GL_INVALID_ENUM: printf("OpenGL Error: GL_INVALID_ENUM\n"); break;
+		case GL_INVALID_VALUE: printf("OpenGL Error: GL_INVALID_VALUE\n"); break;
+		case GL_INVALID_OPERATION: printf("OpenGL Error: GL_INVALID_OPERATION\n"); break;
+		case GL_STACK_OVERFLOW: printf("OpenGL Error: GL_STACK_OVERFLOW\n"); break;
+		case GL_STACK_UNDERFLOW: printf("OpenGL Error: GL_STACK_UNDERFLOW\n"); break;
+		case GL_OUT_OF_MEMORY: printf("OpenGL Error: GL_OUT_OF_MEMORY\n"); break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION: printf("OpenGL Error: GL_INVALID_FRAMEBUFFER_OPERATION\n"); break;
+		case GL_CONTEXT_LOST: printf("OpenGL Error: GL_CONTEXT_LOST\n"); break;
+		case GL_TABLE_TOO_LARGE: printf("OpenGL Error: GL_TABLE_TOO_LARGE\n"); break;
+	}
+}
+
 // Kolla om programmet var startat med ett visst argument
 bool SYS_HasParam(char* p) {
 	for (int i = 0; i < SYS_argc; i++) {
@@ -47,6 +64,10 @@ void SYS_OpenWindow() {
 		SYS_Error("Couldn't start SDL");
 	}
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
 	// Öppna ett fönster
 	window = SDL_CreateWindow(
 		TITLE " - V" VERSION, 
@@ -54,17 +75,15 @@ void SYS_OpenWindow() {
 		V_WIN_WIDTH, V_WIN_HEIGHT, SDL_WINDOW_OPENGL
 	);
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
 	// Starta OpenGL
 	SDL_GL_CreateContext(window);
+
+	SYS_CheckErrors();
 }
 
 // Uppdatera skärmen
 void SYS_UpdateWindow() {
-	SDL_GL_SwapWindow(SYS_window);
+	SDL_GL_SwapWindow(window);
 }
 
 // Programmets start punkt
@@ -91,6 +110,8 @@ int main(int argc, char* argv[]) {
 		G_Tick();
 		V_Tick();
 		SYS_UpdateWindow();
+
+		SYS_CheckErrors();
 	}
 
 	return 0;
