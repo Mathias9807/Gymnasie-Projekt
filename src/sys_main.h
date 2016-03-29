@@ -16,6 +16,8 @@
 // Skillnad i tid mellan denna bild och förra bilden
 extern double SYS_dSec;
 
+void SYS_UpdateWindow();
+bool SYS_HasParam(char* p);
 void SYS_Error(char* s);
 void SYS_Warning(char* s);
 void SYS_OpenWindow();

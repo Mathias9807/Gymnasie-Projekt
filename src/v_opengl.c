@@ -18,7 +18,7 @@ void V_StartOpenGL() {
 	if (error != GLEW_OK) 
 		SYS_Error("GLEW failed to initialize");
 	
-	glGetError(); // Rensar listan med errors
+	glGetError(); // Rensar listan med felmeddelanden
 
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
 	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
