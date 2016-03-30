@@ -14,40 +14,16 @@
 #include "v_main.h"
 #include <GL/glew.h>
 
-#define V_NEAR 0.02
-#define V_FAR 800
-
 typedef struct {
-	GLuint id;
-	GLenum type;
-	int dim; // 2, 3 or 4
-	int bufferSize;
-	GLvoid* buffer;
-} VBO;
-
-typedef struct {
-	GLuint id;
-	VBO vert;
-	VBO uv;
-	VBO normal;
-	VBO weights;
-	VBO tangents;
-	VBO index;
-	int vertCount;
-	int indexCount;
-} VAO;
-
-typedef struct {
-	VAO vao;
+	GLuint list;
 } Model;
 
 extern GLuint curShader;
 extern float V_vertFov;
 
-int V_LoadAssimp(char* path, Model* m);
+Model* V_LoadModel(const char* path);
 void V_StartOpenGL();
 void V_RenderModel(Model* m);
-void V_CreateHeightMap(Model* m, sprite* s, double size, double height);
 void V_ClearColor(float r, float g, float b, float a);
 void V_ClearDepth();
 void V_SetDepthTesting(bool b);

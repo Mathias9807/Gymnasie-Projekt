@@ -33,6 +33,30 @@ void SYS_Warning(char* s) {
 	printf("A non-fatal error occured: %s\n", s);
 }
 
+// Hämta adressen av mappen som programmet ligger i
+const char* SYS_GetBasePath() {
+	static char path[PATH_LENGTH] = {0};
+
+	// Hämta bara adressen om det är första gången funktionen körs
+	if (path[0] == '\0') {
+		char* sPath = SDL_GetBasePath();
+		for (int i = 0; sPath[i]; i++)
+			path[i] = sPath[i];
+
+		SDL_free(sPath);
+	}
+
+	return path;
+}
+
+// Ger tiden sedan programstart i sekunder
+double SYS_GetTime() {
+	static double start = -1;
+	if (start == -1) start = SDL_GetTicks() / 1000.0;
+
+	return SDL_GetTicks() / 1000.0 - start;
+}
+
 void SYS_CheckErrors() {
 	// Decode OpenGL error codes
 	switch (glGetError()) {

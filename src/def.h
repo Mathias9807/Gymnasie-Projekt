@@ -20,7 +20,9 @@
 #include "math.h"
 
 #define TITLE "Space"
-#define VERSION "0.1"
+#ifndef VERSION
+#define VERSION "0.1 indev render test"
+#endif
 
 #define PATH_LENGTH 256
 
