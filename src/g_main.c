@@ -12,6 +12,12 @@
 
 List ships;
 
+// Läs in kameran
+Camera cam = {
+	{0, 2, 3}, 
+	{30, 0, 0}
+};
+
 void G_InitLevel() {
 }
 

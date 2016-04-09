@@ -110,6 +110,18 @@ void SYS_UpdateWindow() {
 	SDL_GL_SwapWindow(window);
 }
 
+int SYS_GetWidth() {
+	int w;
+	SDL_GetWindowSize(window, &w, NULL);
+	return w;
+}
+
+int SYS_GetHeight() {
+	int h;
+	SDL_GetWindowSize(window, NULL, &h);
+	return h;
+}
+
 // Programmets start punkt
 int main(int argc, char* argv[]) {
 	SYS_argc = argc;

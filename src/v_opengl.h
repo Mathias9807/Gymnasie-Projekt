@@ -13,6 +13,7 @@
 
 #include "v_main.h"
 #include <GL/glew.h>
+#include <GL/glu.h>
 
 typedef struct {
 	GLuint list;
@@ -24,6 +25,9 @@ extern float V_vertFov;
 Model* V_LoadModel(const char* path);
 void V_StartOpenGL();
 void V_RenderModel(Model* m);
+void V_ApplyCamera();
+void V_PushState();
+void V_PopState();
 void V_ClearColor(float r, float g, float b, float a);
 void V_ClearDepth();
 void V_SetDepthTesting(bool b);
@@ -34,7 +38,7 @@ void V_BindCubeMap(unsigned id, int pos);
 void V_SetTexRepeating(bool b);
 void V_SetTexInterLinear(bool b);
 void V_SetTexMipmapLinear(bool b);
-void V_MakeProjection(mat4x4 m, float fov, float aspect, float near, float far);
+void V_MakeProjection(float fov, float near, float far);
 void V_SetFaceCullingBack(bool back);
 
 GLuint V_LoadShader(char* name);

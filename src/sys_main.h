@@ -25,5 +25,9 @@ void SYS_Error(char* s);
 void SYS_Warning(char* s);
 void SYS_OpenWindow();
 
+// Get size of window
+int SYS_GetWidth();
+int SYS_GetHeight();
+
 
 #endif // SYS_MAIN_H

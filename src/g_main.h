@@ -18,6 +18,12 @@ typedef struct {
 } Ship;
 extern List ships;
 
+typedef struct {
+	vec3 pos;
+	vec3 rot;
+} Camera;
+extern Camera cam;
+
 void G_InitLevel();
 void G_Tick();
 

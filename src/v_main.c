@@ -10,6 +10,7 @@
 #include "sys_main.h"
 #include "v_opengl.h"
 #include "v_main.h"
+#include "g_main.h"
 
 
 Model* ship;
@@ -24,16 +25,17 @@ void V_Init() {
 	LoadResources();
 
 	V_SetDepthTesting(true);
+	V_MakeProjection(45, 0.1, 10);
 }
 
 void V_Tick() {
 	V_ClearColor(0, 0, 0.4, 0);
 	V_ClearDepth();
 
-	glPushMatrix();
-	glRotated(SYS_GetTime() * 24, 1, 0, 0);
-	glRotated(SYS_GetTime() * 24, 0, 1, 0);
+	V_PushState();
+	V_ApplyCamera();
+	
 	V_RenderModel(ship);
-	glPopMatrix();
+	V_PopState();
 }
 

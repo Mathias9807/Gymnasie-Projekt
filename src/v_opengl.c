@@ -15,6 +15,7 @@
 #include "sys_main.h"
 #include "v_main.h"
 #include "v_opengl.h"
+#include "g_main.h"
 
 
 void V_StartOpenGL() {
@@ -37,6 +38,32 @@ void V_ClearColor(float r, float g, float b, float a) {
 
 void V_ClearDepth() {
 	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void V_MakeProjection(float fov, float near, float far) {
+	double aspect = (double) SYS_GetWidth() / SYS_GetHeight();
+
+	glMatrixMode(GL_PROJECTION);
+	gluPerspective(fov * aspect, aspect, near, far);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+// Flytta scenen som om den sågs igenom kameran
+void V_ApplyCamera() {
+	glRotated(cam.rot[0], 1, 0, 0);
+	glRotated(cam.rot[2], 0, 0, 1);
+	glRotated(cam.rot[1], 0, 1, 0);
+	glTranslated(-cam.pos[0], -cam.pos[1], -cam.pos[2]);
+}
+
+// Spara alla förflyttningar
+void V_PushState() {
+	glPushMatrix();
+}
+
+// Återställ alla förflyttningar sedan förra V_PushState
+void V_PopState() {
+	glPopMatrix();
 }
 
 Model* V_LoadModel(const char* path) {
@@ -67,6 +94,16 @@ Model* V_LoadModel(const char* path) {
 			// För varje punkt i triangeln
 			for (int k = 0; k < face.mNumIndices; k++) {
 				struct aiVector3D vec = mesh->mVertices[face.mIndices[k]];
+				struct aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
+
+				float* color;
+				struct aiColor4D diffuse;
+				if (aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse)
+					== AI_SUCCESS)
+					color = (vec4) {diffuse.r, diffuse.g, diffuse.b, diffuse.a};
+
+				// Skicka färgen till grafikkortet
+				glColor3d(color[0], color[1], color[2]);
 
 				// Skicka punkten till grafikkortet
 				glVertex3d(vec.x, vec.z, vec.y);
@@ -84,6 +121,9 @@ void V_RenderModel(Model* m) {
 }
 
 void V_SetDepthTesting(bool b) {
-	glEnable(GL_DEPTH_TEST);
+	if (b)
+		glEnable(GL_DEPTH_TEST);
+	else
+		glDisable(GL_DEPTH_TEST);
 }
 
