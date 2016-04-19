@@ -94,7 +94,7 @@ void SYS_OpenWindow() {
 
 	// Öppna ett fönster
 	window = SDL_CreateWindow(
-		TITLE " - V" VERSION, 
+		TITLE " - " VERSION, 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
 		V_WIN_WIDTH, V_WIN_HEIGHT, SDL_WINDOW_OPENGL
 	);

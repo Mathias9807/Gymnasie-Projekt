@@ -8,6 +8,8 @@
  */
 
 #include "g_main.h"
+#include "sys_input.h"
+#include "sys_main.h"
 
 
 List ships;
@@ -22,5 +24,11 @@ void G_InitLevel() {
 }
 
 void G_Tick() {
+	SYS_UpdateInput();
+
+	if (SYS_keys[IN_RIGHT]) cam.pos[0] += SYS_dSec;
+	if (SYS_keys[IN_LEFT]) cam.pos[0] -= SYS_dSec;
+	if (SYS_keys[IN_UP]) cam.pos[2] -= SYS_dSec;
+	if (SYS_keys[IN_DOWN]) cam.pos[2] += SYS_dSec;
 }
 
