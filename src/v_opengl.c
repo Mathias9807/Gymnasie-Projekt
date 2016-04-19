@@ -31,6 +31,12 @@ void V_StartOpenGL() {
 	printf("OpenGL implementation provided by %s\n", glGetString(GL_VENDOR));
 }
 
+void V_WindowResized() {
+	V_MakeProjection();
+
+	glViewport(0, 0, SYS_GetWidth(), SYS_GetHeight());
+}
+
 void V_ClearColor(float r, float g, float b, float a) {
 	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -40,16 +46,18 @@ void V_ClearDepth() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void V_MakeProjection(float fov, float near, float far) {
+void V_MakeProjection() {
 	double aspect = (double) SYS_GetWidth() / SYS_GetHeight();
 
 	glMatrixMode(GL_PROJECTION);
-	gluPerspective(fov * aspect, aspect, near, far);
+	glLoadIdentity();
+	gluPerspective(V_fov, aspect, V_near, V_far);
 	glMatrixMode(GL_MODELVIEW);
 }
 
 // Flytta scenen som om den sågs igenom kameran
 void V_ApplyCamera() {
+	glMatrixMode(GL_MODELVIEW);
 	glRotated(cam.rot[0], 1, 0, 0);
 	glRotated(cam.rot[2], 0, 0, 1);
 	glRotated(cam.rot[1], 0, 1, 0);

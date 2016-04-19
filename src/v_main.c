@@ -13,6 +13,8 @@
 #include "g_main.h"
 
 
+double V_fov = 45, V_near = 0.1, V_far = 10;
+
 Model* ship;
 
 void LoadResources() {
@@ -25,7 +27,7 @@ void V_Init() {
 	LoadResources();
 
 	V_SetDepthTesting(true);
-	V_MakeProjection(45, 0.1, 10);
+	V_MakeProjection();
 }
 
 void V_Tick() {

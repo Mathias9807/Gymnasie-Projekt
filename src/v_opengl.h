@@ -38,7 +38,7 @@ void V_BindCubeMap(unsigned id, int pos);
 void V_SetTexRepeating(bool b);
 void V_SetTexInterLinear(bool b);
 void V_SetTexMipmapLinear(bool b);
-void V_MakeProjection(float fov, float near, float far);
+void V_MakeProjection();
 void V_SetFaceCullingBack(bool back);
 
 GLuint V_LoadShader(char* name);

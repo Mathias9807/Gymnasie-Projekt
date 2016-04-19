@@ -96,7 +96,7 @@ void SYS_OpenWindow() {
 	window = SDL_CreateWindow(
 		TITLE " - " VERSION, 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-		V_WIN_WIDTH, V_WIN_HEIGHT, SDL_WINDOW_OPENGL
+		V_WIN_WIDTH, V_WIN_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
 	);
 
 	// Starta OpenGL
@@ -108,6 +108,16 @@ void SYS_OpenWindow() {
 // Uppdatera skärmen
 void SYS_UpdateWindow() {
 	SDL_GL_SwapWindow(window);
+}
+
+void SYS_CheckEvents() {
+	SDL_Event e;
+
+	while (SDL_PollEvent(&e)) {
+		switch (e.type) {
+			case SDL_WINDOWEVENT: V_WindowResized();
+		}
+	}
 }
 
 int SYS_GetWidth() {
@@ -143,6 +153,7 @@ int main(int argc, char* argv[]) {
 		SYS_dSec = now - last;
 		last = now;
 
+		SYS_CheckEvents();
 		G_Tick();
 		V_Tick();
 		SYS_UpdateWindow();

@@ -15,8 +15,11 @@
 #define V_WIN_HEIGHT 600
 
 
+extern double V_fov, V_near, V_far;
+
 void V_Init();
 void V_Tick();
+void V_WindowResized();
 
 
 #endif // V_MAIN_H
