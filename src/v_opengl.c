@@ -102,6 +102,7 @@ Model* V_LoadModel(const char* path) {
 			// För varje punkt i triangeln
 			for (int k = 0; k < face.mNumIndices; k++) {
 				struct aiVector3D vec = mesh->mVertices[face.mIndices[k]];
+				struct aiVector3D nrm = mesh->mNormals[face.mIndices[k]];
 				struct aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
 
 				float* color;
@@ -109,6 +110,9 @@ Model* V_LoadModel(const char* path) {
 				if (aiGetMaterialColor(mtl, AI_MATKEY_COLOR_DIFFUSE, &diffuse)
 					== AI_SUCCESS)
 					color = (vec4) {diffuse.r, diffuse.g, diffuse.b, diffuse.a};
+
+				// Skicka normalen till grafikkortet
+				glNormal3d(nrm.x, nrm.z, nrm.y);
 
 				// Skicka färgen till grafikkortet
 				glColor3d(color[0], color[1], color[2]);

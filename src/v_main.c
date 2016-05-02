@@ -28,6 +28,16 @@ void V_Init() {
 
 	V_SetDepthTesting(true);
 	V_MakeProjection();
+
+	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glShadeModel(GL_SMOOTH);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, (float[4]) {0.3, 0.3, 0.3, 1});
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, (float[4]) {0.5, 0.5, 0.5, 1});
+	glLightfv(GL_LIGHT0, GL_POSITION, (float[4]) {0.0, 1, 0, 1});
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 4);
 }
 
 void V_Tick() {
@@ -37,6 +47,7 @@ void V_Tick() {
 	V_PushState();
 	V_ApplyCamera();
 	
+	glRotated(SYS_GetTime() * 20, 0, 0, 1);
 	V_RenderModel(ship);
 	V_PopState();
 }
