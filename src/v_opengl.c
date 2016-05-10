@@ -65,7 +65,7 @@ void V_ApplyCamera() {
 	glRotated(cam.rot[0], 1, 0, 0);
 	glRotated(cam.rot[2], 0, 0, 1);
 	glRotated(cam.rot[1], 0, 1, 0);
-	glTranslated(-cam.pos[0], -cam.pos[1], -cam.pos[2]);
+	glTranslated(-V_camera->pos[0], -V_camera->pos[1], -V_camera->pos[2]);
 }
 
 // Spara alla förflyttningar

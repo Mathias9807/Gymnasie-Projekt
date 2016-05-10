@@ -15,7 +15,11 @@
 #define V_WIN_HEIGHT 600
 
 
+#include "def.h"
+#include "g_main.h"
+
 extern double V_fov, V_near, V_far;
+extern Camera* V_camera;
 
 void V_Init();
 void V_Tick();

@@ -14,6 +14,7 @@
 
 
 double V_fov = 45, V_near = 0.1, V_far = 10;
+Camera* V_camera = &cam;
 
 Model* ship, * cube;
 
@@ -51,7 +52,7 @@ void V_Tick() {
 
 	V_PushState();
 
-	glRotated(cam.rot[0], 1, 0, 0);
+	glRotated(V_camera->rot[0], 1, 0, 0);
 
 	V_SetDepthWriting(false);
 	V_UseTextures(true);
