@@ -15,10 +15,15 @@
 
 double V_fov = 45, V_near = 0.1, V_far = 10;
 
-Model* ship;
+Model* ship, * cube;
+
+int tex;
 
 void LoadResources() {
 	ship = V_LoadModel("res/Ship/Ship.dae");
+	cube = V_LoadModel("res/cube.dae");
+
+	tex = V_LoadTexture("res/SPAAAACE.png");
 }
 
 void V_Init() {
@@ -45,10 +50,22 @@ void V_Tick() {
 	V_ClearDepth();
 
 	V_PushState();
+
+	glRotated(cam.rot[0], 1, 0, 0);
+
+	V_SetDepthWriting(false);
+	V_UseTextures(true);
+	V_RenderModel(cube);
+	V_SetDepthWriting(true);
+	V_PopState();
+
+	V_PushState();
 	V_ApplyCamera();
 	
+	V_UseTextures(false);
 	glRotated(SYS_GetTime() * 20, 0, 0, 1);
 	V_RenderModel(ship);
+
 	V_PopState();
 }
 

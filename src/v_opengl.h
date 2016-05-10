@@ -40,6 +40,7 @@ void V_SetTexInterLinear(bool b);
 void V_SetTexMipmapLinear(bool b);
 void V_MakeProjection();
 void V_SetFaceCullingBack(bool back);
+void V_UseTextures(bool b);
 
 GLuint V_LoadShader(char* name);
 void V_DeleteShader(int programId);

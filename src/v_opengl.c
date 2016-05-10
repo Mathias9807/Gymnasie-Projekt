@@ -12,6 +12,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+// För att ladda bilder
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
 #include "sys_main.h"
 #include "v_main.h"
 #include "v_opengl.h"
@@ -103,6 +107,7 @@ Model* V_LoadModel(const char* path) {
 			for (int k = 0; k < face.mNumIndices; k++) {
 				struct aiVector3D vec = mesh->mVertices[face.mIndices[k]];
 				struct aiVector3D nrm = mesh->mNormals[face.mIndices[k]];
+				struct aiVector3D uv = {0, 0, 0};
 				struct aiMaterial* mtl = scene->mMaterials[mesh->mMaterialIndex];
 
 				float* color;
@@ -111,13 +116,19 @@ Model* V_LoadModel(const char* path) {
 					== AI_SUCCESS)
 					color = (vec4) {diffuse.r, diffuse.g, diffuse.b, diffuse.a};
 
+				if (mesh->mNumUVComponents[0] > 0) {
+					uv = mesh->mTextureCoords[0][face.mIndices[k]];
+					// Skicka UV koordinaten
+					glTexCoord2d(uv.x, uv.y);
+				}
+
 				// Skicka normalen till grafikkortet
 				glNormal3d(nrm.x, nrm.z, nrm.y);
 
-				// Skicka färgen till grafikkortet
+				// Skicka färgen
 				glColor3d(color[0], color[1], color[2]);
 
-				// Skicka punkten till grafikkortet
+				// Skicka punkten
 				glVertex3d(vec.x, vec.z, vec.y);
 			}
 		}
@@ -126,6 +137,31 @@ Model* V_LoadModel(const char* path) {
 	glEndList();
 
 	return m;
+}
+
+GLuint V_LoadTexture(char* name) {
+	char path[PATH_LENGTH] = {0};
+	strcpy(path, SYS_GetBasePath());
+	strcpy(path, "/");
+	strcpy(path, name);
+	unsigned char* data;
+	int w, h, n;
+	data = stbi_load(path, &w, &h, &n, 4);
+	if (data == NULL) 
+		SYS_Warning("Couldn't load texture");
+	
+	GLuint tex;
+	glGenTextures(1, &tex);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	
+	stbi_image_free(data);
+	return tex;
 }
 
 void V_RenderModel(Model* m) {
@@ -137,5 +173,16 @@ void V_SetDepthTesting(bool b) {
 		glEnable(GL_DEPTH_TEST);
 	else
 		glDisable(GL_DEPTH_TEST);
+}
+
+void V_SetDepthWriting(bool b) {
+	glDepthMask(b);
+}
+
+void V_UseTextures(bool b) {
+	if (b)
+		glEnable(GL_TEXTURE_2D);
+	else
+		glDisable(GL_TEXTURE_2D);
 }
 
