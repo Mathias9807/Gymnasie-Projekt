@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-AM_CFLAGS = --pedantic -Wall -std=c99 -isystem ./include/ -I./src/ `sdl2-config --cflags` -DGLEW_STATIC 
+AM_CFLAGS = --pedantic -Wall -std=c99 -isystem ./include/ -I./src/ `sdl2-config --cflags` -DGLEW_STATIC -g
 AM_LDFLAGS = -L./libs/ `sdl2-config --libs` -lGLEW -lGL -lGLU -lassimp -lm
 
 bin_PROGRAMS = Space

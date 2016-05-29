@@ -35,38 +35,40 @@ void V_Init() {
 	V_SetDepthTesting(true);
 	V_MakeProjection();
 
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glShadeModel(GL_SMOOTH);
+	// glEnable(GL_COLOR_MATERIAL);
+	// glEnable(GL_LIGHTING);
+	// glEnable(GL_LIGHT0);
+	// glShadeModel(GL_SMOOTH);
 
-	glLightfv(GL_LIGHT0, GL_AMBIENT, (float[4]) {0.3, 0.3, 0.3, 1});
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, (float[4]) {0.5, 0.5, 0.5, 1});
-	glLightfv(GL_LIGHT0, GL_POSITION, (float[4]) {0.0, 1, 0, 1});
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 4);
+	// glLightfv(GL_LIGHT0, GL_AMBIENT, (float[4]) {0.3, 0.3, 0.3, 1});
+	// glLightfv(GL_LIGHT0, GL_DIFFUSE, (float[4]) {0.5, 0.5, 0.5, 1});
+	// glLightfv(GL_LIGHT0, GL_POSITION, (float[4]) {0.0, 1, 0, 1});
+	// glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 4);
 }
 
 void V_Tick() {
 	V_ClearColor(0, 0, 0.4, 0);
 	V_ClearDepth();
 
-	V_PushState();
+	// V_PushState();
 
-	glRotated(V_camera->rot[0], 1, 0, 0);
+	// glRotated(V_camera->rot[0], 1, 0, 0);
 
-	V_SetDepthWriting(false);
-	V_UseTextures(true);
-	V_RenderModel(cube);
-	V_SetDepthWriting(true);
-	V_PopState();
+	// V_SetDepthWriting(false);
+	// V_UseTextures(true);
+	// V_RenderModel(cube);
+	// V_SetDepthWriting(true);
+	// V_PopState();
 
-	V_PushState();
-	V_ApplyCamera();
+	// V_PushState();
+	// V_ApplyCamera();
 	
-	V_UseTextures(false);
-	glRotated(SYS_GetTime() * 20, 0, 0, 1);
+	// V_UseTextures(false);
+	// glRotated(SYS_GetTime() * 20, 0, 0, 1);
 	V_RenderModel(ship);
 
-	V_PopState();
+	// V_PopState();
+
+	SYS_CheckErrors();
 }
 

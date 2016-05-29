@@ -11,12 +11,25 @@
 #define V_OPENGL_H
 
 
+#ifndef V_GLES_API
+#define V_GL_API
+#endif
+
 #include "v_main.h"
+#ifdef V_GL_API
 #include <GL/glew.h>
 #include <GL/glu.h>
+#else
+#include <GLES2/gl2.h>
+#endif
 
 typedef struct {
+#ifdef V_GL_API
 	GLuint list;
+#else
+	GLuint indId, vertId, texId, colId, nrmId;
+	int numVerts;
+#endif
 } Model;
 
 extern GLuint curShader;
@@ -42,7 +55,7 @@ void V_MakeProjection();
 void V_SetFaceCullingBack(bool back);
 void V_UseTextures(bool b);
 
-GLuint V_LoadShader(char* name);
+GLuint V_LoadShader(const char* name);
 void V_DeleteShader(int programId);
 GLuint V_LoadTexture(char* name);
 GLuint V_LoadCubeMap(char* name);
