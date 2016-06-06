@@ -41,5 +41,7 @@ void G_Tick() {
 	double sinus = sin(cam.rot[1]);
 	cam.pos[2] += relV[2] * cosinus - relV[0] * sinus;
 	cam.pos[0] += relV[2] * sinus + relV[0] * cosinus;
+
+	if (SYS_keys[IN_QUIT]) SYS_Quit();
 }
 

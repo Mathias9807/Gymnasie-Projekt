@@ -7,7 +7,6 @@
  * (https://opensource.org/licenses/MIT)
  */
 
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
@@ -128,6 +127,11 @@ int SYS_GetHeight() {
 	int h;
 	SDL_GetWindowSize(window, NULL, &h);
 	return h;
+}
+
+void SYS_Quit() {
+	SDL_Quit();
+	exit(0);
 }
 
 // Programmets start punkt
