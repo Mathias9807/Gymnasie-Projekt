@@ -22,15 +22,22 @@
 #include "g_main.h"
 
 
-#ifdef V_GLES_API
 GLuint shader = 0;
-int vertAttrib = 0, colAttrib = 0;
+int vertAttrib = 0, colAttrib = 1, uvAttrib = 2, nrmAttrib = 3;
+
+mat4x4 V_projMat, V_worldMat, V_modelMat;
+
+typedef struct {
+	mat4x4 proj, world, model;
+} MatrixPair;
+List matrixStack;
 
 typedef struct {
 	float x, y, z;
 	float r, g, b;
+	float u, v;
+	float nX, nY, nZ;
 } Vertex;
-#endif
 
 void V_StartOpenGL() {
 #ifdef V_GL_API
@@ -38,23 +45,31 @@ void V_StartOpenGL() {
 	GLenum error = glewInit();
 	if (error != GLEW_OK) 
 		SYS_Error("GLEW failed to initialize");
-#else
+#endif
+
 	// Ladda shader programmet
 	shader = V_LoadShader("shader");
 	glUseProgram(shader);
 
-	vertAttrib = glGetAttribLocation(shader, "vertex_in");
+	glBindAttribLocation(shader, vertAttrib, "vertex_in");
 	glEnableVertexAttribArray(vertAttrib);
-	colAttrib = glGetAttribLocation(shader, "color_in");
+	glBindAttribLocation(shader, colAttrib, "color_in");
 	glEnableVertexAttribArray(colAttrib);
-#endif
+	glBindAttribLocation(shader, uvAttrib, "uv_in");
+	glEnableVertexAttribArray(uvAttrib);
+	glBindAttribLocation(shader, nrmAttrib, "normal_in");
+	glEnableVertexAttribArray(nrmAttrib);
+
+	glActiveTexture(GL_TEXTURE0);
 	
 	glGetError(); // Rensar listan med felmeddelanden
 
 	printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+
 #ifdef V_GL_API
 	printf("GLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
+
 	printf("OpenGL implementation provided by %s\n", glGetString(GL_VENDOR));
 }
 
@@ -74,50 +89,47 @@ void V_ClearDepth() {
 }
 
 void V_MakeProjection() {
-#ifdef V_GL_API
 	double aspect = (double) SYS_GetWidth() / SYS_GetHeight();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	// gluPerspective(V_fov, aspect, V_near, V_far);
-	glOrtho(-1, 1, -1, 1, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-#endif // V_GL_API
+	mat4x4_identity(V_projMat);
+
+	mat4x4_perspective(V_projMat, V_fov, aspect, V_near, V_far);
+
+	V_SetParam4m("proj_mat", V_projMat);
 }
 
 // Flytta scenen som om den sågs igenom kameran
 void V_ApplyCamera() {
-#ifdef V_GL_API
-	glMatrixMode(GL_MODELVIEW);
-	glRotated(cam.rot[0], 1, 0, 0);
-	glRotated(cam.rot[2], 0, 0, 1);
-	glRotated(cam.rot[1], 0, 1, 0);
-	glTranslated(-V_camera->pos[0], -V_camera->pos[1], -V_camera->pos[2]);
-#endif // V_GL_API
+	mat4x4_rotate_X(V_worldMat, V_worldMat, -M_PI / 2 + cam.rot[0]);
+	mat4x4_rotate_Z(V_worldMat, V_worldMat, +cam.rot[2]);
+	mat4x4_rotate_Y(V_worldMat, V_worldMat, +cam.rot[1]);
+	
+	mat4x4_translate_in_place(V_worldMat, 
+		-V_camera->pos[0], -V_camera->pos[1], -V_camera->pos[2]);
 }
 
 // Spara alla förflyttningar
 void V_PushState() {
-#ifdef V_GL_API
-	glPushMatrix();
-#endif // V_GL_API
+	MatrixPair* pair = calloc(1, sizeof(MatrixPair));
+	memcpy(&pair->proj, &V_projMat, sizeof(mat4x4));
+	memcpy(&pair->world, &V_worldMat, sizeof(mat4x4));
+	memcpy(&pair->model, &V_modelMat, sizeof(mat4x4));
+
+	ListAdd(&matrixStack, pair);
 }
 
 // Återställ alla förflyttningar sedan förra V_PushState
 void V_PopState() {
-#ifdef V_GL_API
-	glPopMatrix();
-#endif // V_GL_API
+	MatrixPair* pair = ListGet(&matrixStack, matrixStack.size - 1);
+	memcpy(&V_projMat, &pair->proj, sizeof(mat4x4));
+	memcpy(&V_worldMat, &pair->world, sizeof(mat4x4));
+	memcpy(&V_modelMat, &pair->model, sizeof(mat4x4));
 }
 
 Model* V_LoadModel(const char* path) {
 	Model* m = calloc(1, sizeof(Model));
-#ifdef V_GL_API
-	m->list = glGenLists(1);
-#else
 	glGenBuffers(1, &m->vertId);
 	glBindBuffer(GL_ARRAY_BUFFER, m->vertId);
-#endif
 
 	// Hämta modellens absoluta adress
 	char fullPath[PATH_LENGTH] = {0};
@@ -129,11 +141,6 @@ Model* V_LoadModel(const char* path) {
 					aiProcess_JoinIdenticalVertices |
 					aiProcess_FlipUVs);
 
-	// Skicka meshen till grafikkortet på programstart
-#ifdef V_GL_API
-	glNewList(m->list, GL_COMPILE);
-	glBegin(GL_TRIANGLES);
-#else
 	// Räkna hur många verticeer som finns
 	m->numVerts = 0;
 	for (int i = 0; i < scene->mNumMeshes; i++) {
@@ -145,7 +152,6 @@ Model* V_LoadModel(const char* path) {
 
 	// Håller koll på vilka indexer som redan är fyllda i vertBuffer
 	int curVert = 0;
-#endif
 
 	// För varje mesh
 	for (int i = 0; i < scene->mNumMeshes; i++) {
@@ -168,41 +174,22 @@ Model* V_LoadModel(const char* path) {
 					== AI_SUCCESS)
 					color = (vec4) {diffuse.r, diffuse.g, diffuse.b, diffuse.a};
 
-				if (mesh->mNumUVComponents[0] > 0) {
+				if (mesh->mNumUVComponents[0] > 0)
 					uv = mesh->mTextureCoords[0][face.mIndices[k]];
-					// Skicka UV koordinaten
-#ifdef V_GL_API
-					glTexCoord2d(uv.x, uv.y);
-#endif
-				}
 
-#ifdef V_GL_API
-				// Skicka normalen till grafikkortet
-				glNormal3d(nrm.x, nrm.z, nrm.y);
-
-				// Skicka färgen
-				glColor3d(color[0], color[1], color[2]);
-
-				// Skicka punkten
-				glVertex3d(vec.x, vec.z, vec.y);
-#else
 				vertBuffer[curVert++] = (Vertex) {
 					vec.x, vec.z, vec.y,
-					color[0], color[1], color[2]
+					color[0], color[1], color[2],
+					uv.x, uv.y,
+					nrm.x, nrm.z, nrm.y
 				};
-#endif
 			}
 		}
 	}
-#ifdef V_GL_API
-	glEnd();
-	glEndList();
-#else
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * m->numVerts, 
 		vertBuffer, GL_STATIC_DRAW);
 
 	free(vertBuffer);
-#endif
 
 	return m;
 }
@@ -228,8 +215,8 @@ GLuint V_LoadTexture(char* name) {
 #endif
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
 #ifdef V_GL_API
 	glGenerateMipmap(GL_TEXTURE_2D);
 #endif
@@ -257,7 +244,6 @@ void V_CheckProgram(GLuint id) {
 	glGetProgramInfoLog(id, logLength, &logLength, log);
 	printf("%s\n", log);
 }
-
 
 // Laddar shader program och skickar dem till grafikkortet
 // Inte särskilt intressant faktiskt
@@ -321,15 +307,30 @@ GLuint V_LoadShader(const char* name) {
 }
 
 void V_RenderModel(Model* m) {
-#ifdef V_GL_API
-	glCallList(m->list);
-#else
+	mat4x4 tmp, tmp2;
+	mat4x4_mul(tmp, V_worldMat, V_modelMat);
+	mat4x4_mul(tmp2, V_projMat, tmp);
+	V_SetParam4m("proj_mat", tmp2);
+
+	mat4x4_identity(tmp);
+	mat4x4_mul(tmp2, tmp, V_modelMat);
+	mat4x4_transpose(tmp, tmp2);
+	mat4x4_invert(tmp2, tmp);
+	V_SetParam4m("norm_mat", tmp2);
+	//V_SetParam4m("norm_mat", V_modelMat);
+
 	glBindBuffer(GL_ARRAY_BUFFER, m->vertId);
 
 	glVertexAttribPointer(vertAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glEnableVertexAttribArray(vertAttrib);
 	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 12);
+	glEnableVertexAttribArray(colAttrib);
+	glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 24);
+	glEnableVertexAttribArray(uvAttrib);
+	glVertexAttribPointer(nrmAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 32);
+	glEnableVertexAttribArray(nrmAttrib);
+
 	glDrawArrays(GL_TRIANGLES, 0, m->numVerts);
-#endif
 }
 
 void V_SetDepthTesting(bool b) {
@@ -345,8 +346,30 @@ void V_SetDepthWriting(bool b) {
 
 void V_UseTextures(bool b) {
 	if (b)
-		glEnable(GL_TEXTURE_2D);
+		V_SetParam1f("textures", 1);
 	else
-		glDisable(GL_TEXTURE_2D);
+		V_SetParam1f("textures", 0);
+}
+
+void V_BindTexture(unsigned id, int pos) {
+	glActiveTexture(GL_TEXTURE0 + pos);
+	glBindTexture(GL_TEXTURE_2D, id);
+}
+
+void V_SetParam4m(const char* var, mat4x4 mat) {
+	GLuint id = glGetUniformLocation(shader, var);
+	float fArr[16];
+	for (int i = 0; i < 16; i++) fArr[i] = mat[i / 4][i % 4];
+	glUniformMatrix4fv(id, 1, GL_FALSE, fArr);
+}
+
+void V_SetParam1i(const char* var, int i) {
+	GLuint id = glGetUniformLocation(shader, var);
+	glUniform1i(id, i);
+}
+
+void V_SetParam1f(const char* var, float f) {
+	GLuint id = glGetUniformLocation(shader, var);
+	glUniform1f(id, f);
 }
 

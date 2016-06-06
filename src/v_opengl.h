@@ -24,16 +24,14 @@
 #endif
 
 typedef struct {
-#ifdef V_GL_API
-	GLuint list;
-#else
 	GLuint indId, vertId, texId, colId, nrmId;
 	int numVerts;
-#endif
 } Model;
 
 extern GLuint curShader;
 extern float V_vertFov;
+
+extern mat4x4 V_projMat, V_worldMat, V_modelMat;
 
 Model* V_LoadModel(const char* path);
 void V_StartOpenGL();

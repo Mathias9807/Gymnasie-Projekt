@@ -24,5 +24,15 @@ void SYS_UpdateInput() {
 	SYS_keys[IN_DOWN] = state[SDL_SCANCODE_S];
 	SYS_keys[IN_RIGHT] = state[SDL_SCANCODE_D];
 	SYS_keys[IN_LEFT] = state[SDL_SCANCODE_A];
+
+	int y = 0;
+	y += state[SDL_SCANCODE_RIGHT];
+	y -= state[SDL_SCANCODE_LEFT];
+	SYS_var[IN_ROT_Y] = y;
+
+	int x = 0;
+	x -= state[SDL_SCANCODE_UP];
+	x += state[SDL_SCANCODE_DOWN];
+	SYS_var[IN_ROT_X] = x;
 }
 

@@ -17,7 +17,7 @@ List ships;
 // Läs in kameran
 Camera cam = {
 	{0, 2, 3}, 
-	{30, 0, 0}
+	{M_PI / 2, 0, 0}
 };
 
 void G_InitLevel() {
@@ -26,9 +26,20 @@ void G_InitLevel() {
 void G_Tick() {
 	SYS_UpdateInput();
 
-	if (SYS_keys[IN_RIGHT]) cam.pos[0] += SYS_dSec;
-	if (SYS_keys[IN_LEFT]) cam.pos[0] -= SYS_dSec;
-	if (SYS_keys[IN_UP]) cam.pos[2] -= SYS_dSec;
-	if (SYS_keys[IN_DOWN]) cam.pos[2] += SYS_dSec;
+	// Rörelse relativt till kameran
+	vec3 relV = {0};
+	if (SYS_keys[IN_RIGHT]) relV[0] += SYS_dSec;
+	if (SYS_keys[IN_LEFT]) relV[0] -= SYS_dSec;
+	if (SYS_keys[IN_UP]) relV[2] -= SYS_dSec;
+	if (SYS_keys[IN_DOWN]) relV[2] += SYS_dSec;
+
+	cam.rot[0] += SYS_var[IN_ROT_X] * SYS_dSec;
+	cam.rot[1] -= SYS_var[IN_ROT_Y] * SYS_dSec;
+
+	// TRIGONOMETRI
+	double cosinus = cos(cam.rot[1]);
+	double sinus = sin(cam.rot[1]);
+	cam.pos[2] += relV[2] * cosinus - relV[0] * sinus;
+	cam.pos[0] += relV[2] * sinus + relV[0] * cosinus;
 }
 

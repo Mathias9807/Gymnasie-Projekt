@@ -18,6 +18,9 @@
 #include <string.h>
 #include <linmath/linmath.h>
 #include "math.h"
+#ifndef M_PI
+#define M_PI 3.1415926535
+#endif
 
 #define TITLE "Space"
 #undef VERSION

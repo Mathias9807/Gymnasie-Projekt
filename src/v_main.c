@@ -21,10 +21,10 @@ Model* ship, * cube;
 int tex;
 
 void LoadResources() {
-	ship = V_LoadModel("res/Ship/Ship.dae");
+	ship = V_LoadModel("res/Sphere.dae");
 	cube = V_LoadModel("res/cube.dae");
 
-	tex = V_LoadTexture("res/SPAAAACE.png");
+	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
 }
 
 void V_Init() {
@@ -32,7 +32,13 @@ void V_Init() {
 	V_StartOpenGL();
 	LoadResources();
 
+	V_SetParam1i("diffuse_tex", 0);
+
 	V_SetDepthTesting(true);
+
+	mat4x4_identity(V_projMat);
+	mat4x4_identity(V_worldMat);
+	mat4x4_identity(V_modelMat);
 	V_MakeProjection();
 
 	// glEnable(GL_COLOR_MATERIAL);
@@ -50,24 +56,30 @@ void V_Tick() {
 	V_ClearColor(0, 0, 0.4, 0);
 	V_ClearDepth();
 
-	// V_PushState();
-
-	// glRotated(V_camera->rot[0], 1, 0, 0);
-
-	// V_SetDepthWriting(false);
-	// V_UseTextures(true);
-	// V_RenderModel(cube);
-	// V_SetDepthWriting(true);
-	// V_PopState();
-
-	// V_PushState();
-	// V_ApplyCamera();
+	V_PushState();
+	V_ApplyCamera();
 	
-	// V_UseTextures(false);
-	// glRotated(SYS_GetTime() * 20, 0, 0, 1);
+	for (int i = 0; i < 3; i++)
+		V_worldMat[3][i] = 0;
+
+	V_SetDepthWriting(false);
+	V_BindTexture(tex, 0);
+	V_UseTextures(true);
+	V_RenderModel(cube);
+	V_SetDepthWriting(true);
+	V_PopState();
+
+	V_PushState();
+	V_ApplyCamera();
+
+	V_UseTextures(false);
+	
+	mat4x4_rotate_Z(V_modelMat, V_modelMat, SYS_GetTime() * 2);
+	//mat4x4_rotate_Z(V_modelMat, V_modelMat, M_PI / 2);
+
 	V_RenderModel(ship);
 
-	// V_PopState();
+	V_PopState();
 
 	SYS_CheckErrors();
 }
