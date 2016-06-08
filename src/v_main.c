@@ -13,18 +13,21 @@
 #include "g_main.h"
 
 
-double V_fov = 45, V_near = 0.1, V_far = 10;
+double V_fov = 45, V_near = 0.1, V_far = 100;
 Camera* V_camera = &cam;
 
 Model* ship, * cube;
+Model* plane;
 
-int tex;
+int tex, schack;
 
 void LoadResources() {
-	ship = V_LoadModel("res/Sphere.dae");
+	ship = V_LoadModel("res/Ship/Ship.dae");
 	cube = V_LoadModel("res/cube.dae");
+	plane = V_LoadModel("res/Plane.dae");
 
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
+	schack = V_LoadTexture("res/Schack.png");
 }
 
 void V_Init() {
@@ -40,28 +43,23 @@ void V_Init() {
 	mat4x4_identity(V_worldMat);
 	mat4x4_identity(V_modelMat);
 	V_MakeProjection();
-
-	// glEnable(GL_COLOR_MATERIAL);
-	// glEnable(GL_LIGHTING);
-	// glEnable(GL_LIGHT0);
-	// glShadeModel(GL_SMOOTH);
-
-	// glLightfv(GL_LIGHT0, GL_AMBIENT, (float[4]) {0.3, 0.3, 0.3, 1});
-	// glLightfv(GL_LIGHT0, GL_DIFFUSE, (float[4]) {0.5, 0.5, 0.5, 1});
-	// glLightfv(GL_LIGHT0, GL_POSITION, (float[4]) {0.0, 1, 0, 1});
-	// glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 4);
 }
 
 void V_Tick() {
+	// Rensa skärmen
 	V_ClearColor(0, 0, 0.4, 0);
 	V_ClearDepth();
 
+	// Rita bakgrundsbilden genom att rita en kub runtom
+	// kameran med depth-writing avstängt
 	V_PushState();
 	V_ApplyCamera();
 	
+	// Sätt positionsdatan till 0 så kuben ligger på kameran
 	for (int i = 0; i < 3; i++)
 		V_worldMat[3][i] = 0;
 
+	// Rita kuben
 	V_SetDepthWriting(false);
 	V_BindTexture(tex, 0);
 	V_UseTextures(true);
@@ -72,15 +70,24 @@ void V_Tick() {
 	V_PushState();
 	V_ApplyCamera();
 
-	V_UseTextures(false);
-	
-	mat4x4_rotate_Z(V_modelMat, V_modelMat, SYS_GetTime() * 2);
-	//mat4x4_rotate_Z(V_modelMat, V_modelMat, M_PI / 2);
+	// Rita ett schackbräde
+	V_PushState();
+	mat4x4 tmp;
+	mat4x4_identity(tmp);
+	mat4x4_translate_in_place(tmp, 0, -2, 0);
+	mat4x4_scale_aniso(V_modelMat, tmp, 256, 256, 256);
+	V_BindTexture(schack, 0);
+	V_RenderModel(plane);
+	V_PopState();
 
+	// Rita rymdskeppet
+	V_UseTextures(false);
+	mat4x4_rotate_Z(V_modelMat, V_modelMat, SYS_GetTime() * 2);
 	V_RenderModel(ship);
 
 	V_PopState();
 
+	// Kolla så att allt gick bra
 	SYS_CheckErrors();
 }
 
