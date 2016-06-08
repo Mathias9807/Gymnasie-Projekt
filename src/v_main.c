@@ -13,8 +13,8 @@
 #include "g_main.h"
 
 
-double V_fov = 45, V_near = 0.1, V_far = 100;
-Camera* V_camera = &cam;
+// Kameran som ritar scenen
+Camera* camera;
 
 Model* ship, * cube;
 Model* plane;
@@ -42,7 +42,6 @@ void V_Init() {
 	mat4x4_identity(V_projMat);
 	mat4x4_identity(V_worldMat);
 	mat4x4_identity(V_modelMat);
-	V_MakeProjection();
 }
 
 void V_Tick() {
@@ -89,5 +88,12 @@ void V_Tick() {
 
 	// Kolla så att allt gick bra
 	SYS_CheckErrors();
+}
+
+// Sätt kamerans värden
+void V_SetCamera(Camera* c) {
+	camera = c;
+
+	V_MakeProjection();
 }
 

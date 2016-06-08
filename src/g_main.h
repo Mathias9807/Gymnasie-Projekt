@@ -21,6 +21,8 @@ extern List ships;
 typedef struct {
 	vec3 pos;
 	vec3 rot;
+
+	double fov, near, far;
 } Camera;
 extern Camera cam;
 

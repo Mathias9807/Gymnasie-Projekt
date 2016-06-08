@@ -22,6 +22,8 @@
 #include "g_main.h"
 
 
+extern Camera* camera;
+
 GLuint shader = 0;
 int vertAttrib = 0, colAttrib = 1, uvAttrib = 2, nrmAttrib = 3;
 
@@ -89,11 +91,17 @@ void V_ClearDepth() {
 }
 
 void V_MakeProjection() {
+	if (camera == NULL) return;
+
 	double aspect = (double) SYS_GetWidth() / SYS_GetHeight();
 
 	mat4x4_identity(V_projMat);
 
-	mat4x4_perspective(V_projMat, V_fov, aspect, V_near, V_far);
+	mat4x4_perspective(V_projMat, 
+			camera->fov, 
+			aspect, 
+			camera->near, 
+			camera->far);
 
 	V_SetParam4m("proj_mat", V_projMat);
 }
@@ -105,7 +113,7 @@ void V_ApplyCamera() {
 	mat4x4_rotate_Y(V_worldMat, V_worldMat, +cam.rot[1]);
 	
 	mat4x4_translate_in_place(V_worldMat, 
-		-V_camera->pos[0], -V_camera->pos[1], -V_camera->pos[2]);
+		-camera->pos[0], -camera->pos[1], -camera->pos[2]);
 }
 
 // Spara alla förflyttningar

@@ -10,6 +10,7 @@
 #include "g_main.h"
 #include "sys_input.h"
 #include "sys_main.h"
+#include "v_main.h"
 
 
 List ships;
@@ -17,10 +18,12 @@ List ships;
 // Läs in kameran
 Camera cam = {
 	{0, 2, 3}, 
-	{M_PI / 2, 0, 0}
+	{M_PI / 2, 0, 0},
+	45, 0.1, 100
 };
 
 void G_InitLevel() {
+	V_SetCamera(&cam);
 }
 
 void G_Tick() {
