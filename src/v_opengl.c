@@ -111,9 +111,9 @@ void V_ApplyCamera() {
 // Spara alla förflyttningar
 void V_PushState() {
 	MatrixPair* pair = calloc(1, sizeof(MatrixPair));
-	memcpy(&pair->proj, &V_projMat, sizeof(mat4x4));
-	memcpy(&pair->world, &V_worldMat, sizeof(mat4x4));
-	memcpy(&pair->model, &V_modelMat, sizeof(mat4x4));
+	memcpy(&pair->proj, V_projMat, sizeof(mat4x4));
+	memcpy(&pair->world, V_worldMat, sizeof(mat4x4));
+	memcpy(&pair->model, V_modelMat, sizeof(mat4x4));
 
 	ListAdd(&matrixStack, pair);
 }
@@ -121,9 +121,11 @@ void V_PushState() {
 // Återställ alla förflyttningar sedan förra V_PushState
 void V_PopState() {
 	MatrixPair* pair = ListGet(&matrixStack, matrixStack.size - 1);
-	memcpy(&V_projMat, &pair->proj, sizeof(mat4x4));
-	memcpy(&V_worldMat, &pair->world, sizeof(mat4x4));
-	memcpy(&V_modelMat, &pair->model, sizeof(mat4x4));
+	memcpy(V_projMat, &pair->proj, sizeof(mat4x4));
+	memcpy(V_worldMat, &pair->world, sizeof(mat4x4));
+	memcpy(V_modelMat, &pair->model, sizeof(mat4x4));
+
+	ListRemove(&matrixStack, matrixStack.size - 1);
 }
 
 Model* V_LoadModel(const char* path) {
@@ -215,8 +217,8 @@ GLuint V_LoadTexture(char* name) {
 #endif
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); 
 #ifdef V_GL_API
 	glGenerateMipmap(GL_TEXTURE_2D);
 #endif
@@ -317,7 +319,6 @@ void V_RenderModel(Model* m) {
 	mat4x4_transpose(tmp, tmp2);
 	mat4x4_invert(tmp2, tmp);
 	V_SetParam4m("norm_mat", tmp2);
-	//V_SetParam4m("norm_mat", V_modelMat);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m->vertId);
 
