@@ -14,13 +14,21 @@
 #include "def.h"
 
 typedef struct {
-	vec3 pos;
+	vec3 pos, rot;
 } Ship;
-extern List ships;
+extern List G_ships;
+Ship* G_player;
 
 typedef struct {
+	// Absoluta koordinater
 	vec3 pos;
 	vec3 rot;
+
+	// Alternativt relativa koordinater
+	// Om focus == 0 används absoluta koordinater
+	Ship* focus;
+	vec3 pOffs;
+	vec2 rOffs;
 
 	double fov, near, far;
 } Camera;

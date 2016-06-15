@@ -108,12 +108,28 @@ void V_MakeProjection() {
 
 // Flytta scenen som om den sågs igenom kameran
 void V_ApplyCamera() {
-	mat4x4_rotate_X(V_worldMat, V_worldMat, -M_PI / 2 + cam.rot[0]);
-	mat4x4_rotate_Z(V_worldMat, V_worldMat, +cam.rot[2]);
-	mat4x4_rotate_Y(V_worldMat, V_worldMat, +cam.rot[1]);
-	
-	mat4x4_translate_in_place(V_worldMat, 
-		-camera->pos[0], -camera->pos[1], -camera->pos[2]);
+	Ship* f = camera->focus;
+	if (f) {
+		mat4x4_rotate_X(V_worldMat, V_worldMat, -camera->rOffs[0]);
+		mat4x4_rotate_Y(V_worldMat, V_worldMat, -camera->rOffs[1]);
+
+		mat4x4_translate_in_place(V_worldMat, 
+			-camera->pOffs[0], -camera->pOffs[1], -camera->pOffs[2]);
+
+		mat4x4_rotate_X(V_worldMat, V_worldMat, f->rot[0]);
+		mat4x4_rotate_Z(V_worldMat, V_worldMat, f->rot[2]);
+		mat4x4_rotate_Y(V_worldMat, V_worldMat, f->rot[1]);
+
+		mat4x4_translate_in_place(V_worldMat, 
+			-f->pos[0], -f->pos[1], -f->pos[2]);
+	}else {
+		mat4x4_rotate_X(V_worldMat, V_worldMat, -M_PI / 2 + cam.rot[0]);
+		mat4x4_rotate_Z(V_worldMat, V_worldMat, +cam.rot[2]);
+		mat4x4_rotate_Y(V_worldMat, V_worldMat, +cam.rot[1]);
+		
+		mat4x4_translate_in_place(V_worldMat, 
+			-camera->pos[0], -camera->pos[1], -camera->pos[2]);
+	}
 }
 
 // Spara alla förflyttningar

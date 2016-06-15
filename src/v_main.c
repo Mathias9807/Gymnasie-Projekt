@@ -45,6 +45,8 @@ void V_Init() {
 }
 
 void V_Tick() {
+	mat4x4 tmp;
+
 	// Rensa skärmen
 	V_ClearColor(0, 0, 0.4, 0);
 	V_ClearDepth();
@@ -71,7 +73,6 @@ void V_Tick() {
 
 	// Rita ett schackbräde
 	V_PushState();
-	mat4x4 tmp;
 	mat4x4_identity(tmp);
 	mat4x4_translate_in_place(tmp, 0, -2, 0);
 	mat4x4_scale_aniso(V_modelMat, tmp, 256, 256, 256);
@@ -81,7 +82,11 @@ void V_Tick() {
 
 	// Rita rymdskeppet
 	V_UseTextures(false);
-	mat4x4_rotate_Z(V_modelMat, V_modelMat, SYS_GetTime() * 2);
+	mat4x4_translate(V_modelMat, 
+		G_player->pos[0], G_player->pos[1], G_player->pos[2]);
+	mat4x4_rotate_Y(V_modelMat, V_modelMat, M_PI - G_player->rot[1]);
+	mat4x4_rotate_X(V_modelMat, V_modelMat, G_player->rot[0]);
+
 	V_RenderModel(ship);
 
 	V_PopState();

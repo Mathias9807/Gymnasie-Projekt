@@ -12,7 +12,7 @@ uniform sampler2D diffuse_tex;
 uniform mat4 norm_mat;
 
 void main() {
-	vec3 diff = vec3(0.0);
+	vec3 diff = vec3(0.1, 0.1, 0.1);
 
 	diff += max(dot(normalize(normal), normalize(vec3(1, 1, 1))), 0.0);
 
