@@ -22,11 +22,16 @@ Camera cam = {
 	.fov = 45, .near = 0.1, .far = 100
 };
 
-// Var kameran ska sitta relativt med skeppet
-vec3 camPos = {0, 2, 4};
+// Ökningen i hastighet när ett skepp boostar
+double acceleration(double t) {
+	return 3 * t * t - 2 * t * t * t;
+}
 
 void G_InitLevel() {
 	G_player = calloc(1, sizeof(Ship));
+	G_player->accTFactor	= 0.4;
+	G_player->accSpeed	= 16;
+	G_player->baseSpeed	= 8;
 	ListAdd(&G_ships, G_player);
 	
 	cam.focus = G_player;
@@ -37,20 +42,28 @@ void G_Tick() {
 	SYS_UpdateInput();
 
 	// Rörelse relativt till kameran
-	vec3 relV = {0};
-	if (SYS_keys[IN_RIGHT]) relV[0] += SYS_dSec;
-	if (SYS_keys[IN_LEFT]) relV[0] -= SYS_dSec;
-	if (SYS_keys[IN_UP]) relV[2] -= SYS_dSec;
-	if (SYS_keys[IN_DOWN]) relV[2] += SYS_dSec;
+	float boost = 0;
+	if (SYS_keys[IN_UP])	boost += SYS_dSec;
+	if (SYS_keys[IN_DOWN])	boost -= SYS_dSec;
+	G_player->accT += boost * G_player->accTFactor;
+	G_player->accT = min(G_player->accT, 1);
+	G_player->accT = max(G_player->accT, 0);
 
-	G_player->rot[0] += SYS_var[IN_ROT_X] * SYS_dSec;
+	// G_player->rot[0] += SYS_var[IN_ROT_X] * SYS_dSec;
 	G_player->rot[1] -= SYS_var[IN_ROT_Y] * SYS_dSec;
 
 	// TRIGONOMETRI
 	double cosinus = cos(G_player->rot[1]);
 	double sinus = sin(G_player->rot[1]);
-	G_player->pos[2] += relV[2] * cosinus - relV[0] * sinus;
-	G_player->pos[0] += relV[2] * sinus + relV[0] * cosinus;
+	// G_player->vel[2] += relV[2] * cosinus - relV[0] * sinus;
+	// G_player->vel[0] += relV[2] * sinus + relV[0] * cosinus;
+	float speed = G_player->baseSpeed + G_player->accSpeed 
+		* acceleration(G_player->accT);
+	G_player->vel[2] = -speed * cosinus;
+	G_player->vel[0] = -speed * sinus;
+
+	for (int i = 0; i < 3; i++)
+		G_player->pos[i] += G_player->vel[i] * SYS_dSec;
 
 	if (SYS_keys[IN_QUIT]) SYS_Quit();
 }

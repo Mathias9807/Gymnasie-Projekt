@@ -14,8 +14,14 @@
 #include "def.h"
 
 typedef struct {
-	vec3 pos, rot;
+	vec3 pos, vel, rot;
+
+	// För accelerationsfunktionen
+	float accT, accTFactor, accSpeed;
+
+	float baseSpeed;
 } Ship;
+
 extern List G_ships;
 Ship* G_player;
 

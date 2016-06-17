@@ -51,5 +51,8 @@ int ListSize(List* l);
 void ListAdd(List* l, void* value);
 void ListRemove(List* l, int index);
 
+double min(double a, double b);
+double max(double a, double b);
+
 
 #endif // DEF_H
