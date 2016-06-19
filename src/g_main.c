@@ -35,8 +35,11 @@ void G_InitLevel() {
 	ListAdd(&G_ships, G_player);
 
 	Ship* s = calloc(1, sizeof(Ship));
-	s->pos[2] = -10;
-	s->rot[1] = M_PI * 3 / 4;
+	s->pos[2]	= -10;
+	s->rot[1]	= M_PI * 3 / 4;
+	s->accTFactor	= 0.4;
+	s->accSpeed	= 16;
+	s->baseSpeed	= 8;
 	ListAdd(&G_ships, s);
 	
 	cam.focus = G_player;
@@ -57,18 +60,23 @@ void G_Tick() {
 	// G_player->rot[0] += SYS_var[IN_ROT_X] * SYS_dSec;
 	G_player->rot[1] -= SYS_var[IN_ROT_Y] * SYS_dSec;
 
-	// TRIGONOMETRI
-	double cosinus = cos(G_player->rot[1]);
-	double sinus = sin(G_player->rot[1]);
-	// G_player->vel[2] += relV[2] * cosinus - relV[0] * sinus;
-	// G_player->vel[0] += relV[2] * sinus + relV[0] * cosinus;
-	float speed = G_player->baseSpeed + G_player->accSpeed 
-		* acceleration(G_player->accT);
-	G_player->vel[2] = -speed * cosinus;
-	G_player->vel[0] = -speed * sinus;
+	// Applicera hastigheten och accelerationen på alla skepp
+	for (int i = 0; i < G_ships.size; i++) {
+		Ship* s = ListGet(&G_ships, i);
 
-	for (int i = 0; i < 3; i++)
-		G_player->pos[i] += G_player->vel[i] * SYS_dSec;
+		// TRIGONOMETRI
+		double cosinus = cos(s->rot[1]);
+		double sinus = sin(s->rot[1]);
+		// s->vel[2] += relV[2] * cosinus - relV[0] * sinus;
+		// s->vel[0] += relV[2] * sinus + relV[0] * cosinus;
+		float speed = s->baseSpeed + s->accSpeed 
+			* acceleration(s->accT);
+		s->vel[2] = -speed * cosinus;
+		s->vel[0] = -speed * sinus;
+
+		for (int i = 0; i < 3; i++)
+			s->pos[i] += s->vel[i] * SYS_dSec;
+	}
 
 	if (SYS_keys[IN_QUIT]) SYS_Quit();
 }
