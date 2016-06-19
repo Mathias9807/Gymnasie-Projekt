@@ -21,6 +21,13 @@ enum {
 extern bool SYS_keys[IN_LAST];
 extern float SYS_var[IN_LAST];
 
+// Vilken typ av "kontroll" som används
+enum {
+	SYS_KEYBOARD,
+	SYS_CONTROLLER
+};
+extern int SYS_inputDevice;
+
 void SYS_InitInput();
 void SYS_UpdateInput();
 

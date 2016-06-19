@@ -16,6 +16,7 @@
 #include "g_main.h"
 
 SDL_Window* window;
+extern SDL_GameController* SYS_controller;
 
 // Delta tid mellan frames
 double SYS_dSec;
@@ -113,7 +114,30 @@ void SYS_CheckEvents() {
 
 	while (SDL_PollEvent(&e)) {
 		switch (e.type) {
-			case SDL_WINDOWEVENT: V_WindowResized();
+			case SDL_WINDOWEVENT:
+				V_WindowResized();
+				break;
+
+			// Byter vilka kontroller som används
+			case SDL_CONTROLLERBUTTONUP: {
+				if (SYS_inputDevice == SYS_CONTROLLER) break;
+
+				memset(SYS_keys, 0, sizeof(SYS_keys));
+				memset(SYS_var, 0, sizeof(SYS_var));
+
+				SYS_inputDevice = SYS_CONTROLLER;
+				break;
+			}
+
+			case SDL_KEYUP: {
+				if (SYS_inputDevice == SYS_KEYBOARD) break;
+
+				memset(SYS_keys, 0, sizeof(SYS_keys));
+				memset(SYS_var, 0, sizeof(SYS_var));
+
+				SYS_inputDevice = SYS_KEYBOARD;
+				break;
+			}
 		}
 	}
 }

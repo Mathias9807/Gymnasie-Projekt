@@ -16,11 +16,6 @@
 #define SYS_DEADZONE 8000
 
 
-// Vilken typ av "kontroll" som används
-enum {
-	SYS_KEYBOARD,
-	SYS_CONTROLLER
-};
 int SYS_inputDevice = SYS_KEYBOARD;
 
 SDL_GameController* SYS_controller = NULL;
@@ -29,10 +24,8 @@ bool SYS_keys[IN_LAST];
 float SYS_var[IN_LAST];
 
 void SYS_InitInput() {
-	if (SDL_NumJoysticks() > 0) {
-		SYS_inputDevice = SYS_CONTROLLER;
+	if (SDL_NumJoysticks() > 0)
 		SYS_controller = SDL_GameControllerOpen(0);
-	}
 }
 
 // Uppdaterar listorna med knappar och spakar
