@@ -80,14 +80,17 @@ void V_Tick() {
 	V_RenderModel(plane);
 	V_PopState();
 
-	// Rita rymdskeppet
+	// Rita rymdskeppen
 	V_UseTextures(false);
-	mat4x4_translate(V_modelMat, 
-		G_player->pos[0], G_player->pos[1], G_player->pos[2]);
-	mat4x4_rotate_Y(V_modelMat, V_modelMat, M_PI - G_player->rot[1]);
-	mat4x4_rotate_X(V_modelMat, V_modelMat, G_player->rot[0]);
+	for (int i = 0; i < G_ships.size; i++) {
+		Ship* s = ListGet(&G_ships, i);
 
-	V_RenderModel(ship);
+		mat4x4_translate(V_modelMat, s->pos[0], s->pos[1], s->pos[2]);
+		mat4x4_rotate_Y(V_modelMat, V_modelMat, M_PI - s->rot[1]);
+		mat4x4_rotate_X(V_modelMat, V_modelMat, s->rot[0]);
+
+		V_RenderModel(ship);
+	}
 
 	V_PopState();
 

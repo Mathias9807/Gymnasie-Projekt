@@ -33,6 +33,11 @@ void G_InitLevel() {
 	G_player->accSpeed	= 16;
 	G_player->baseSpeed	= 8;
 	ListAdd(&G_ships, G_player);
+
+	Ship* s = calloc(1, sizeof(Ship));
+	s->pos[2] = -10;
+	s->rot[1] = M_PI * 3 / 4;
+	ListAdd(&G_ships, s);
 	
 	cam.focus = G_player;
 	V_SetCamera(&cam);
