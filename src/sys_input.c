@@ -83,6 +83,9 @@ void SYS_UpdateInput() {
 			if (abs(x) <= SYS_DEADZONE) x = 0;
 			SYS_var[IN_ROT_X] = x / (double) SHRT_MAX;
 
+			SYS_keys[IN_QUIT] = SDL_GameControllerGetButton(
+					SYS_controller, SDL_CONTROLLER_BUTTON_BACK);
+
 			break;
 		}
 	}
