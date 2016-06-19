@@ -11,6 +11,7 @@
 #include <SDL2/SDL_opengl.h>
 
 #include "sys_main.h"
+#include "sys_input.h"
 #include "v_main.h"
 #include "g_main.h"
 
@@ -82,7 +83,7 @@ bool SYS_HasParam(char* p) {
 
 void SYS_OpenWindow() {
 	// Starta SDL
-	if (SDL_Init(SDL_INIT_VIDEO)) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER)) {
 		SYS_Error("Couldn't start SDL");
 	}
 
@@ -144,8 +145,11 @@ int main(int argc, char* argv[]) {
 
 		return 0;
 	}
-	
+
 	V_Init();
+
+	SYS_InitInput();
+	
 	G_InitLevel();
 
 	double now = SDL_GetTicks() / 1000.0;

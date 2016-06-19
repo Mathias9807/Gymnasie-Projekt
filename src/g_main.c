@@ -51,8 +51,7 @@ void G_Tick() {
 
 	// Rörelse relativt till kameran
 	float boost = 0;
-	if (SYS_keys[IN_UP])	boost += SYS_dSec;
-	if (SYS_keys[IN_DOWN])	boost -= SYS_dSec;
+	boost += SYS_dSec * SYS_var[IN_UP];
 	G_player->accT += boost * G_player->accTFactor;
 	G_player->accT = min(G_player->accT, 1);
 	G_player->accT = max(G_player->accT, 0);

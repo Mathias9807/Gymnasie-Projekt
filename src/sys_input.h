@@ -15,12 +15,13 @@
 
 // Indexen för varje kontroll i SYS_keys och SYS_var
 enum {
-	IN_UP, IN_DOWN, IN_RIGHT, IN_LEFT, IN_ROT_X, IN_ROT_Y, IN_QUIT, IN_LAST
+	IN_UP, IN_RIGHT, IN_ROT_X, IN_ROT_Y, IN_QUIT, IN_LAST
 };
 
 extern bool SYS_keys[IN_LAST];
 extern float SYS_var[IN_LAST];
 
+void SYS_InitInput();
 void SYS_UpdateInput();
 
 
