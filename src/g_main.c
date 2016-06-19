@@ -29,7 +29,7 @@ double acceleration(double t) {
 
 void G_InitLevel() {
 	G_player = calloc(1, sizeof(Ship));
-	G_player->accTFactor	= 0.4;
+	G_player->accTFactor	= 1.2;
 	G_player->accSpeed	= 16;
 	G_player->baseSpeed	= 8;
 	ListAdd(&G_ships, G_player);
@@ -51,7 +51,7 @@ void G_Tick() {
 
 	// Rörelse relativt till kameran
 	float boost = 0;
-	boost += SYS_dSec * SYS_var[IN_UP];
+	boost += SYS_dSec * (SYS_var[IN_BOOST] * 2 - 1);
 	G_player->accT += boost * G_player->accTFactor;
 	G_player->accT = min(G_player->accT, 1);
 	G_player->accT = max(G_player->accT, 0);
