@@ -116,9 +116,9 @@ void V_ApplyCamera() {
 		mat4x4_translate_in_place(V_worldMat, 
 			-camera->pOffs[0], -camera->pOffs[1], -camera->pOffs[2]);
 
-		mat4x4_rotate_X(V_worldMat, V_worldMat, f->rot[0]);
-		mat4x4_rotate_Z(V_worldMat, V_worldMat, f->rot[2]);
-		mat4x4_rotate_Y(V_worldMat, V_worldMat, f->rot[1]);
+		mat4x4 tmp;
+		mat4x4_invert(tmp, f->rot);
+		mat4x4_mul(V_worldMat, V_worldMat, tmp);
 
 		mat4x4_translate_in_place(V_worldMat, 
 			-f->pos[0], -f->pos[1], -f->pos[2]);

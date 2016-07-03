@@ -86,8 +86,7 @@ void V_Tick() {
 		Ship* s = ListGet(&G_ships, i);
 
 		mat4x4_translate(V_modelMat, s->pos[0], s->pos[1], s->pos[2]);
-		mat4x4_rotate_Y(V_modelMat, V_modelMat, M_PI - s->rot[1]);
-		mat4x4_rotate_X(V_modelMat, V_modelMat, s->rot[0]);
+		mat4x4_mul(V_modelMat, V_modelMat, s->rot);
 
 		V_RenderModel(ship);
 	}

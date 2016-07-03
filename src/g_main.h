@@ -14,7 +14,8 @@
 #include "def.h"
 
 typedef struct {
-	vec3 pos, vel, rot;
+	vec3 pos, vel;
+	mat4x4 rot;
 
 	// För accelerationsfunktionen
 	float accT, accTFactor, accSpeed;

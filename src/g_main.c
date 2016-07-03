@@ -29,14 +29,16 @@ double acceleration(double t) {
 
 void G_InitLevel() {
 	G_player = calloc(1, sizeof(Ship));
+	mat4x4_identity(G_player->rot);
 	G_player->accTFactor	= 1.2;
 	G_player->accSpeed	= 16;
 	G_player->baseSpeed	= 8;
 	ListAdd(&G_ships, G_player);
 
 	Ship* s = calloc(1, sizeof(Ship));
+	mat4x4_identity(s->rot);
+	mat4x4_rotate_Y(s->rot, s->rot, M_PI * 3 / 4);
 	s->pos[2]	= -10;
-	s->rot[1]	= M_PI * 3 / 4;
 	s->accTFactor	= 0.4;
 	s->accSpeed	= 16;
 	s->baseSpeed	= 8;
@@ -56,22 +58,32 @@ void G_Tick() {
 	G_player->accT = min(G_player->accT, 1);
 	G_player->accT = max(G_player->accT, 0);
 
-	// G_player->rot[0] += SYS_var[IN_ROT_X] * SYS_dSec;
-	G_player->rot[1] -= SYS_var[IN_ROT_Y] * SYS_dSec;
+	// Rotation relativt till skeppets orientation
+	vec4 zAxis, yAxis, xAxis;
+	mat4x4 rot;
+	mat4x4_identity(rot);
+	mat4x4_mul_vec4(zAxis, G_player->rot, (vec4) {0, 0, 1, 0});
+	mat4x4_mul_vec4(yAxis, G_player->rot, (vec4) {0, 1, 0, 0});
+	mat4x4_mul_vec4(xAxis, G_player->rot, (vec4) {1, 0, 0, 0});
+	mat4x4_rotate(rot, rot, xAxis[0], xAxis[1], xAxis[2], 
+		SYS_var[IN_ROT_X] * SYS_dSec);
+	mat4x4_rotate(rot, rot, yAxis[0], yAxis[1], yAxis[2], 
+		-SYS_var[IN_ROT_Y] * SYS_dSec);
+	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
+		-SYS_var[IN_ROT_Z] * SYS_dSec);
+	mat4x4_mul(G_player->rot, rot, G_player->rot);
 
 	// Applicera hastigheten och accelerationen på alla skepp
 	for (int i = 0; i < G_ships.size; i++) {
 		Ship* s = ListGet(&G_ships, i);
 
-		// TRIGONOMETRI
-		double cosinus = cos(s->rot[1]);
-		double sinus = sin(s->rot[1]);
-		// s->vel[2] += relV[2] * cosinus - relV[0] * sinus;
-		// s->vel[0] += relV[2] * sinus + relV[0] * cosinus;
+		vec4 v = {0, 0, -1, 0}, r;
+		mat4x4_mul_vec4(r, s->rot, v);
 		float speed = s->baseSpeed + s->accSpeed 
 			* acceleration(s->accT);
-		s->vel[2] = -speed * cosinus;
-		s->vel[0] = -speed * sinus;
+		s->vel[0] = speed * r[0];
+		s->vel[1] = speed * r[1];
+		s->vel[2] = speed * r[2];
 
 		for (int i = 0; i < 3; i++)
 			s->pos[i] += s->vel[i] * SYS_dSec;

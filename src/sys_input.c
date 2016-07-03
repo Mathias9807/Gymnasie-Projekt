@@ -24,8 +24,11 @@ bool SYS_keys[IN_LAST];
 float SYS_var[IN_LAST];
 
 void SYS_InitInput() {
-	if (SDL_NumJoysticks() > 0)
+	if (SDL_NumJoysticks() > 0) {
 		SYS_controller = SDL_GameControllerOpen(0);
+
+		printf("Detected controller\n");
+	}
 }
 
 // Uppdaterar listorna med knappar och spakar
@@ -36,7 +39,7 @@ void SYS_UpdateInput() {
 			
 			SYS_var[IN_UP] = state[SDL_SCANCODE_W] 
 				- state[SDL_SCANCODE_S];
-			SYS_var[IN_RIGHT] = state[SDL_SCANCODE_D]
+			SYS_var[IN_ROT_Z] = state[SDL_SCANCODE_D]
 			       - state[SDL_SCANCODE_A];
 			SYS_var[IN_BOOST] = state[SDL_SCANCODE_LSHIFT];
 
@@ -65,7 +68,7 @@ void SYS_UpdateInput() {
 			double r = SDL_GameControllerGetAxis(SYS_controller, 
 					SDL_CONTROLLER_AXIS_LEFTX);
 			if (abs(r) <= SYS_DEADZONE) r = 0;
-			SYS_var[IN_RIGHT] = r / (double) SHRT_MAX;
+			SYS_var[IN_ROT_Z] = r / (double) SHRT_MAX;
 
 			double y = SDL_GameControllerGetAxis(SYS_controller, 
 					SDL_CONTROLLER_AXIS_RIGHTX);
