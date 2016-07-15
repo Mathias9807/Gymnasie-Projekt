@@ -34,6 +34,8 @@ typedef struct {
 	// Alternativt relativa koordinater
 	// Om focus == 0 används absoluta koordinater
 	Ship* focus;
+	Ship* ghost;	// En kopia av focus som laggar efter lite
+			// för att göra kamerarörelserna mjukare
 	vec3 pOffs;
 	vec2 rOffs;
 

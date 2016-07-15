@@ -44,8 +44,8 @@ void G_InitLevel() {
 	s->baseSpeed	= 8;
 	ListAdd(&G_ships, s);
 	
-	cam.focus = G_player;
 	V_SetCamera(&cam);
+	V_SetCameraFocus(G_player);
 }
 
 void G_Tick() {
@@ -90,5 +90,30 @@ void G_Tick() {
 	}
 
 	if (SYS_keys[IN_QUIT]) SYS_Quit();
+
+	// Flytta kameran till skeppet i fokus
+	if (cam.ghost) {
+		Ship* g = cam.ghost;
+		Ship* f = cam.focus;
+
+		// Hur mycket kameran ska flyttas
+		// Halveringstidsformeln används (N = N_0 * ½^(t / T_½)
+		double tP = pow(1.0 / 2, SYS_GetTime() / V_CAM_AVST_HALV_TID);
+		double tR = pow(1.0 / 2, SYS_GetTime() / V_CAM_ROT_HALV_TID);
+
+		for (int i = 0; i < 3; i++) 
+			g->pos[i] = interp(f->pos[i], g->pos[i], tP);
+
+		for (int i = 0; i < 3; i++) 
+			g->vel[i] = interp(f->vel[i], g->vel[i], tP);
+
+		// Det här är naivt och korkat, man kan inte interpolera
+		// rotationsmatriser genom att bara interpolera alla skalärer.
+		//
+		// Men ändå så funkar det
+		for (int i = 0; i < 4; i++) 
+			for (int j = 0; j < 4; j++) 
+				g->rot[i][j] = interp(f->rot[i][j], g->rot[i][j], tR);
+	}
 }
 

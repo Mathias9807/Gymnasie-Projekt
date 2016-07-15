@@ -108,7 +108,7 @@ void V_MakeProjection() {
 
 // Flytta scenen som om den sågs igenom kameran
 void V_ApplyCamera() {
-	Ship* f = camera->focus;
+	Ship* f = camera->ghost;
 	if (f) {
 		mat4x4_rotate_X(V_worldMat, V_worldMat, -camera->rOffs[0]);
 		mat4x4_rotate_Y(V_worldMat, V_worldMat, -camera->rOffs[1]);

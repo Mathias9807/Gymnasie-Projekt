@@ -53,6 +53,7 @@ void ListRemove(List* l, int index);
 
 double min(double a, double b);
 double max(double a, double b);
+double interp(double a, double b, double t);
 
 
 #endif // DEF_H

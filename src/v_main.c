@@ -104,3 +104,11 @@ void V_SetCamera(Camera* c) {
 	V_MakeProjection();
 }
 
+void V_SetCameraFocus(Ship* s) {
+	camera->focus = s;
+
+	Ship* g = calloc(1, sizeof(Ship));
+	memcpy(g, s, sizeof(Ship));
+	camera->ghost = g;
+}
+
