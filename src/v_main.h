@@ -14,8 +14,8 @@
 #define V_WIN_WIDTH 800
 #define V_WIN_HEIGHT 600
 
-#define V_CAM_AVST_HALV_TID 30
-#define V_CAM_ROT_HALV_TID 30
+#define V_CAM_AVST_HALV_TID	0.1
+#define V_CAM_ROT_HALV_TID	0.1
 
 
 #include "def.h"

@@ -98,8 +98,8 @@ void G_Tick() {
 
 		// Hur mycket kameran ska flyttas
 		// Halveringstidsformeln används (N = N_0 * ½^(t / T_½)
-		double tP = pow(1.0 / 2, SYS_GetTime() / V_CAM_AVST_HALV_TID);
-		double tR = pow(1.0 / 2, SYS_GetTime() / V_CAM_ROT_HALV_TID);
+		double tP = pow(1.0 / 2, SYS_dSec / V_CAM_AVST_HALV_TID);
+		double tR = pow(1.0 / 2, SYS_dSec / V_CAM_ROT_HALV_TID);
 
 		for (int i = 0; i < 3; i++) 
 			g->pos[i] = interp(f->pos[i], g->pos[i], tP);
