@@ -24,7 +24,11 @@ typedef struct {
 } Ship;
 
 extern List G_ships;
-Ship* G_player;
+extern Ship* G_player;
+
+// Because windows is the best OS
+#undef near
+#undef far
 
 typedef struct {
 	// Absoluta koordinater

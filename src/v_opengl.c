@@ -53,14 +53,10 @@ void V_StartOpenGL() {
 	shader = V_LoadShader("shader");
 	glUseProgram(shader);
 
-	glBindAttribLocation(shader, vertAttrib, "vertex_in");
-	glEnableVertexAttribArray(vertAttrib);
-	glBindAttribLocation(shader, colAttrib, "color_in");
-	glEnableVertexAttribArray(colAttrib);
-	glBindAttribLocation(shader, uvAttrib, "uv_in");
-	glEnableVertexAttribArray(uvAttrib);
-	glBindAttribLocation(shader, nrmAttrib, "normal_in");
-	glEnableVertexAttribArray(nrmAttrib);
+	vertAttrib = glGetAttribLocation(shader, "vertex_in");
+	colAttrib = glGetAttribLocation(shader, "color_in");
+	nrmAttrib = glGetAttribLocation(shader, "normal_in");
+	uvAttrib = glGetAttribLocation(shader, "uv_in");
 
 	glActiveTexture(GL_TEXTURE0);
 	
