@@ -4,7 +4,7 @@ AM_CFLAGS = --pedantic -Wall -std=c99 -isystem ./include/ -I./src/ `sdl2-config 
 AM_LDFLAGS = -L./libs/ `sdl2-config --libs` -lGLEW -lGL -lGLU -lassimp -lm
 
 bin_PROGRAMS = Space
-Space_SOURCES = ./src/v_opengl.c ./src/def.c ./src/g_main.c ./src/v_main.c ./src/sys_main.c ./src/sys_input.c ./src/v_opengl.h ./src/g_main.h ./src/v_main.h ./src/sys_main.h ./src/sys_input.h ./src/def.h ./include/linmath/linmath.h ./include/stb/stb_image.h
+Space_SOURCES = ./src/v_opengl.c ./src/def.c ./src/g_main.c ./src/v_main.c ./src/s_main.c ./src/sys_main.c ./src/sys_input.c ./src/v_opengl.h ./src/g_main.h ./src/v_main.h ./src/s_main.h ./src/sys_main.h ./src/sys_input.h ./src/def.h ./include/linmath/linmath.h ./include/stb/stb_image.h
 Spacedir = $(datadir)
 dist_Space_DATA = ./res ./res/Ship/Ship.dae
 

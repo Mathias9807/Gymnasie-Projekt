@@ -14,6 +14,7 @@
 #include "sys_input.h"
 #include "v_main.h"
 #include "g_main.h"
+#include "s_main.h"
 
 SDL_Window* window;
 extern SDL_GameController* SYS_controller;
@@ -26,12 +27,12 @@ int	SYS_argc = 0;
 char** SYS_argv = NULL;
 
 void SYS_Error(char* s) {
-	printf("A fatal error occured: %s\n", s);
+	printf("A fatal error occurred: %s\n", s);
 	exit(-1);
 }
 
 void SYS_Warning(char* s) {
-	printf("A non-fatal error occured: %s\n", s);
+	printf("A non-fatal error occurred: %s\n", s);
 }
 
 // Hämta adressen av mappen som programmet ligger i
@@ -175,6 +176,8 @@ int main(int argc, char* argv[]) {
 	SYS_InitInput();
 	
 	G_InitLevel();
+
+	S_Init();
 
 	double now = SDL_GetTicks() / 1000.0;
 	double last = now;
