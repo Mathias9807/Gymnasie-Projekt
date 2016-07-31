@@ -141,6 +141,30 @@ void SYS_CheckEvents() {
 				SYS_inputDevice = SYS_KEYBOARD;
 				break;
 			}
+
+			case SDL_CONTROLLERDEVICEADDED: {
+				printf("A controller was added!\n");
+				
+				if (!SYS_controller)
+					SYS_controller = SDL_GameControllerOpen(0);
+				
+				break;
+			}
+
+			case SDL_CONTROLLERDEVICEREMOVED: {
+				printf("A controller was disconnected\n");
+				
+				if (SDL_NumJoysticks > 0) break;
+				
+				SYS_controller = NULL;
+				
+				memset(SYS_keys, 0, sizeof(SYS_keys));
+				memset(SYS_var, 0, sizeof(SYS_var));
+
+				SYS_inputDevice = SYS_KEYBOARD;
+				
+				break;
+			}
 		}
 	}
 }
