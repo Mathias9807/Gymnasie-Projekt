@@ -59,6 +59,12 @@ void G_Tick() {
 	G_player->accT = max(G_player->accT, 0);
 
 	// Rotation relativt till skeppets orientation
+	double vert = 0, horiz = 0, tilt = 0;
+	vert += SYS_var[IN_RVERT] - SYS_var[IN_LVERT];
+	// vert = min(vert, 1);
+	horiz += SYS_var[IN_RHORIZ];
+	tilt += SYS_var[IN_LHORIZ];
+	
 	vec4 zAxis, yAxis, xAxis;
 	mat4x4 rot;
 	mat4x4_identity(rot);
@@ -66,11 +72,11 @@ void G_Tick() {
 	mat4x4_mul_vec4(yAxis, G_player->rot, (vec4) {0, 1, 0, 0});
 	mat4x4_mul_vec4(xAxis, G_player->rot, (vec4) {1, 0, 0, 0});
 	mat4x4_rotate(rot, rot, xAxis[0], xAxis[1], xAxis[2], 
-		SYS_var[IN_ROT_X] * SYS_dSec);
+		vert * SYS_dSec);
 	mat4x4_rotate(rot, rot, yAxis[0], yAxis[1], yAxis[2], 
-		-SYS_var[IN_ROT_Y] * SYS_dSec);
+		-horiz * SYS_dSec);
 	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
-		-SYS_var[IN_ROT_Z] * SYS_dSec);
+		-tilt * SYS_dSec);
 	mat4x4_mul(G_player->rot, rot, G_player->rot);
 
 	// Applicera hastigheten och accelerationen på alla skepp

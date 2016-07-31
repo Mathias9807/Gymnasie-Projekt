@@ -37,53 +37,48 @@ void SYS_UpdateInput() {
 		case SYS_KEYBOARD: {
 			const Uint8* state = SDL_GetKeyboardState(NULL);
 			
-			SYS_var[IN_UP] = state[SDL_SCANCODE_W] 
+			SYS_var[IN_LVERT] = state[SDL_SCANCODE_W] 
 				- state[SDL_SCANCODE_S];
-			SYS_var[IN_ROT_Z] = state[SDL_SCANCODE_D]
+			SYS_var[IN_LHORIZ] = state[SDL_SCANCODE_D]
 			       - state[SDL_SCANCODE_A];
+			SYS_var[IN_RVERT] = state[SDL_SCANCODE_UP] 
+				- state[SDL_SCANCODE_DOWN];
+			SYS_var[IN_RHORIZ] = state[SDL_SCANCODE_RIGHT]
+			       - state[SDL_SCANCODE_LEFT];
+			
 			SYS_var[IN_BOOST] = state[SDL_SCANCODE_LSHIFT];
-
-			SYS_keys[IN_QUIT]	= state[SDL_SCANCODE_Q];
-
-			int y = 0;
-			y += state[SDL_SCANCODE_RIGHT];
-			y -= state[SDL_SCANCODE_LEFT];
-			SYS_var[IN_ROT_Y] = y;
-
-			int x = 0;
-			x -= state[SDL_SCANCODE_UP];
-			x += state[SDL_SCANCODE_DOWN];
-			SYS_var[IN_ROT_X] = x;
+			SYS_keys[IN_QUIT] = state[SDL_SCANCODE_Q];
 			break;
 		}
 
 		case SYS_CONTROLLER: {
 			SDL_GameControllerUpdate();
-
-			double u = -SDL_GameControllerGetAxis(SYS_controller, 
+			
+			double d = 0;
+			d = -SDL_GameControllerGetAxis(SYS_controller, 
 					SDL_CONTROLLER_AXIS_LEFTY);
-			if (abs(u) <= SYS_DEADZONE) u = 0;
-			SYS_var[IN_UP] = u / (double) SHRT_MAX;
+			if (abs(d) <= SYS_DEADZONE) d = 0;
+			SYS_var[IN_LVERT] = d / (double) SHRT_MAX;
 
-			double r = SDL_GameControllerGetAxis(SYS_controller, 
+			d = SDL_GameControllerGetAxis(SYS_controller, 
 					SDL_CONTROLLER_AXIS_LEFTX);
-			if (abs(r) <= SYS_DEADZONE) r = 0;
-			SYS_var[IN_ROT_Z] = r / (double) SHRT_MAX;
-
-			double y = SDL_GameControllerGetAxis(SYS_controller, 
-					SDL_CONTROLLER_AXIS_RIGHTX);
-			if (abs(y) <= SYS_DEADZONE) y = 0;
-			SYS_var[IN_ROT_Y] = y / (double) SHRT_MAX;
-
-			double x = SDL_GameControllerGetAxis(SYS_controller, 
+			if (abs(d) <= SYS_DEADZONE) d = 0;
+			SYS_var[IN_LHORIZ] = d / (double) SHRT_MAX;
+			
+			d = -SDL_GameControllerGetAxis(SYS_controller, 
 					SDL_CONTROLLER_AXIS_RIGHTY);
-			if (abs(x) <= SYS_DEADZONE) x = 0;
-			SYS_var[IN_ROT_X] = x / (double) SHRT_MAX;
+			if (abs(d) <= SYS_DEADZONE) d = 0;
+			SYS_var[IN_RVERT] = d / (double) SHRT_MAX;
 
-			double b = SDL_GameControllerGetAxis(SYS_controller, 
+			d = SDL_GameControllerGetAxis(SYS_controller, 
+					SDL_CONTROLLER_AXIS_RIGHTX);
+			if (abs(d) <= SYS_DEADZONE) d = 0;
+			SYS_var[IN_RHORIZ] = d / (double) SHRT_MAX;
+
+			d = SDL_GameControllerGetAxis(SYS_controller, 
 					SDL_CONTROLLER_AXIS_TRIGGERLEFT);
-			if (abs(b) <= SYS_DEADZONE) b = 0;
-			SYS_var[IN_BOOST] = b / (double) SHRT_MAX;
+			if (abs(d) <= SYS_DEADZONE) d = 0;
+			SYS_var[IN_BOOST] = d / (double) SHRT_MAX;
 
 			SYS_keys[IN_QUIT] = SDL_GameControllerGetButton(
 					SYS_controller, SDL_CONTROLLER_BUTTON_BACK);
