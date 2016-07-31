@@ -47,6 +47,9 @@ void V_Init() {
 void V_Tick() {
 	mat4x4 tmp;
 
+	mat4x4_identity(V_worldMat);
+	V_ApplyCamera();
+
 	// Rensa skärmen
 	V_ClearColor(0, 0, 0.4, 0);
 	V_ClearDepth();
@@ -54,7 +57,6 @@ void V_Tick() {
 	// Rita bakgrundsbilden genom att rita en kub runtom
 	// kameran med depth-writing avstängt
 	V_PushState();
-	V_ApplyCamera();
 	
 	// Sätt positionsdatan till 0 så kuben ligger på kameran
 	for (int i = 0; i < 3; i++)
@@ -69,7 +71,6 @@ void V_Tick() {
 	V_PopState();
 
 	V_PushState();
-	V_ApplyCamera();
 
 	// Rita ett schackbräde
 	V_PushState();

@@ -23,10 +23,13 @@
 
 extern double V_fov, V_near, V_far;
 
+extern mat4x4 V_projMat, V_worldMat, V_modelMat;
+
 void V_Init();
 void V_Tick();
 void V_SetCamera(Camera* c);
 void V_SetCameraFocus(Ship* s);
+void V_ApplyCamera();
 void V_WindowResized();
 
 

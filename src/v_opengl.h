@@ -31,12 +31,9 @@ typedef struct {
 extern GLuint curShader;
 extern float V_vertFov;
 
-extern mat4x4 V_projMat, V_worldMat, V_modelMat;
-
 Model* V_LoadModel(const char* path);
 void V_StartOpenGL();
 void V_RenderModel(Model* m);
-void V_ApplyCamera();
 void V_PushState();
 void V_PopState();
 void V_ClearColor(float r, float g, float b, float a);

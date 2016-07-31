@@ -22,6 +22,8 @@ extern SDL_GameController* SYS_controller;
 // Delta tid mellan frames
 double SYS_dSec;
 
+bool SYS_running = true;
+
 // Program argument
 int	SYS_argc = 0;
 char** SYS_argv = NULL;
@@ -181,19 +183,23 @@ int main(int argc, char* argv[]) {
 
 	double now = SDL_GetTicks() / 1000.0;
 	double last = now;
-	while (!SDL_QuitRequested()) {
+	while (!SDL_QuitRequested() && SYS_running) {
 		now = SDL_GetTicks() / 1000.0;
 		SYS_dSec = now - last;
 		last = now;
 
 		SYS_CheckEvents();
 		G_Tick();
+		S_Tick();
 		V_Tick();
 		SYS_UpdateWindow();
 
 		SYS_CheckErrors();
 	}
 
+	S_Quit();
+
+	SYS_Quit();
 	return 0;
 }
 

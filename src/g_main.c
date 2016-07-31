@@ -37,8 +37,8 @@ void G_InitLevel() {
 
 	Ship* s = calloc(1, sizeof(Ship));
 	mat4x4_identity(s->rot);
-	mat4x4_rotate_Y(s->rot, s->rot, M_PI * 3 / 4);
-	s->pos[2]	= -10;
+	mat4x4_rotate_Y(s->rot, s->rot, M_PI);
+	memcpy(s->pos, (vec3) {1, 1, -50}, sizeof(vec3));
 	s->accTFactor	= 0.4;
 	s->accSpeed	= 16;
 	s->baseSpeed	= 8;
@@ -89,7 +89,7 @@ void G_Tick() {
 			s->pos[i] += s->vel[i] * SYS_dSec;
 	}
 
-	if (SYS_keys[IN_QUIT]) SYS_Quit();
+	if (SYS_keys[IN_QUIT]) SYS_running = false;
 
 	// Flytta kameran till skeppet i fokus
 	if (cam.ghost) {

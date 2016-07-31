@@ -13,13 +13,32 @@
 
 #include "def.h"
 #include "sys_main.h"
+#include "g_main.h"
+
+#define S_GLOBAL_VOLUME 50
 
 struct _Clip;
 typedef struct _Clip Clip;
 
+typedef struct {
+	unsigned sourceID;
+
+	Ship* s;
+
+	Camera* c;
+
+	vec3 pos, vel;
+} AudioSource;
+extern List S_sources;
+
 void S_Init();
+void S_Tick();
 void S_Quit();
+
+void S_PlayClip(Clip* c, AudioSource* source, bool repeating);
 Clip S_LoadWav(const char* link);
+
+AudioSource* S_CreateSource();
 
 
 #endif // S_MAIN_H

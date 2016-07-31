@@ -16,6 +16,8 @@
 // Skillnad i tid mellan denna bild och förra bilden
 extern double SYS_dSec;
 
+extern bool SYS_running;
+
 const char* SYS_GetBasePath();
 double SYS_GetTime();
 void SYS_UpdateWindow();
