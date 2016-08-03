@@ -154,7 +154,7 @@ void SYS_CheckEvents() {
 			case SDL_CONTROLLERDEVICEREMOVED: {
 				printf("A controller was disconnected\n");
 				
-				if (SDL_NumJoysticks > 0) break;
+				if (SDL_NumJoysticks() > 0) break;
 				
 				SYS_controller = NULL;
 				
