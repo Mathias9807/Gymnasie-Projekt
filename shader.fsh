@@ -16,7 +16,9 @@ void main() {
 
 	diff += max(dot(normalize(normal), normalize(vec3(1, 1, 1))), 0.0);
 
-	gl_FragColor = vec4(texture2D(diffuse_tex, uv).rgb, 1);
+	float alpha = textures * texture2D(diffuse_tex, uv).a;
+
+	gl_FragColor = vec4(texture2D(diffuse_tex, uv).rgb, alpha);
 
 	if (textures < 1.0)
 		gl_FragColor = vec4(color * diff, 1);

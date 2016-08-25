@@ -15,6 +15,7 @@
 
 List G_ships;
 Ship* G_player;
+List G_particles;
 
 // Läs in kameran
 Camera cam = {
@@ -43,6 +44,10 @@ void G_InitLevel() {
 	s->accSpeed	= 16;
 	s->baseSpeed	= 8;
 	ListAdd(&G_ships, s);
+
+	Particle* p = calloc(1, sizeof(Particle));
+	memcpy(p->pos, (vec3) {20, 0, 0}, sizeof(vec3));
+	ListAdd(&G_particles, p);
 	
 	V_SetCamera(&cam);
 	V_SetCameraFocus(G_player);

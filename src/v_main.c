@@ -18,6 +18,11 @@ Camera* camera;
 
 Model* ship, * cube;
 Model* plane;
+Model* billboard;
+
+// Alla partikel texturer
+#define NUM_PART_TEXTURES 1
+int partTextures[NUM_PART_TEXTURES];
 
 int tex, schack;
 
@@ -25,9 +30,13 @@ void LoadResources() {
 	ship = V_LoadModel("res/Ship/Ship.dae");
 	cube = V_LoadModel("res/cube.dae");
 	plane = V_LoadModel("res/Plane.dae");
+	billboard = V_LoadModel("res/billboard.dae");
 
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
 	schack = V_LoadTexture("res/Schack.png");
+
+	for (int i = 0; i < NUM_PART_TEXTURES; i++)
+		partTextures[i] = V_LoadTexture("res/Smoke.png");
 }
 
 void V_Init() {
@@ -91,6 +100,21 @@ void V_Tick() {
 
 		V_RenderModel(ship);
 	}
+
+	// Rita partiklarna
+	V_UseTextures(false);
+	V_IsParticle(true);
+	V_PushState();
+	for (int i = 0; i < G_particles.size; i++) {
+		Particle* p = ListGet(&G_particles, i);
+		V_BindTexture(partTextures[p->texture], 0);
+
+		mat4x4_translate(V_modelMat, p->pos[0], p->pos[1], p->pos[2]);
+
+		V_RenderModel(billboard);
+	}
+	V_PopState();
+	V_IsParticle(false);
 
 	V_PopState();
 

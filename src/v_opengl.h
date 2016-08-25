@@ -49,6 +49,7 @@ void V_SetTexMipmapLinear(bool b);
 void V_MakeProjection();
 void V_SetFaceCullingBack(bool back);
 void V_UseTextures(bool b);
+void V_IsParticle(bool b);
 
 GLuint V_LoadShader(const char* name);
 void V_DeleteShader(int programId);

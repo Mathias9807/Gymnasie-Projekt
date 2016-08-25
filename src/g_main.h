@@ -26,6 +26,13 @@ typedef struct {
 extern List G_ships;
 extern Ship* G_player;
 
+typedef struct {
+	int texture;
+	
+	vec3 pos, vel;
+} Particle;
+extern List G_particles;
+
 // Because windows is the best OS
 #undef near
 #undef far

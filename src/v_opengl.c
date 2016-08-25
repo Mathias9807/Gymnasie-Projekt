@@ -59,6 +59,8 @@ void V_StartOpenGL() {
 	uvAttrib = glGetAttribLocation(shader, "uv_in");
 
 	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	glGetError(); // Rensar listan med felmeddelanden
 
@@ -75,6 +77,8 @@ void V_WindowResized() {
 	V_MakeProjection();
 
 	glViewport(0, 0, SYS_GetWidth(), SYS_GetHeight());
+
+	V_SetParam2f("resolution", SYS_GetWidth(), SYS_GetHeight());
 }
 
 void V_ClearColor(float r, float g, float b, float a) {
@@ -372,6 +376,14 @@ void V_UseTextures(bool b) {
 		V_SetParam1f("textures", 0);
 }
 
+void V_IsParticle(bool b) {
+	if (b)
+		V_SetParam1f("particle", 1);
+	else
+		V_SetParam1f("particle", 0);
+	V_UseTextures(b);
+}
+
 void V_BindTexture(unsigned id, int pos) {
 	glActiveTexture(GL_TEXTURE0 + pos);
 	glBindTexture(GL_TEXTURE_2D, id);
@@ -392,5 +404,10 @@ void V_SetParam1i(const char* var, int i) {
 void V_SetParam1f(const char* var, float f) {
 	GLuint id = glGetUniformLocation(shader, var);
 	glUniform1f(id, f);
+}
+
+void V_SetParam2f(const char* var, float x, float y) {
+	GLuint id = glGetUniformLocation(shader, var);
+	glUniform2f(id, x, y);
 }
 
