@@ -30,6 +30,7 @@ typedef struct {
 	int texture;
 	
 	vec3 pos, vel;
+	float scale;
 } Particle;
 extern List G_particles;
 

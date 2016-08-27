@@ -21,7 +21,7 @@ Model* plane;
 Model* billboard;
 
 // Alla partikel texturer
-#define NUM_PART_TEXTURES 1
+#define NUM_PART_TEXTURES 8
 int partTextures[NUM_PART_TEXTURES];
 
 int tex, schack;
@@ -35,8 +35,10 @@ void LoadResources() {
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
 	schack = V_LoadTexture("res/Schack.png");
 
-	for (int i = 0; i < NUM_PART_TEXTURES; i++)
-		partTextures[i] = V_LoadTexture("res/Smoke.png");
+	int i = 0;
+	partTextures[i++] = V_LoadTexture("res/Smoke.png");
+	partTextures[i++] = V_LoadTexture("res/Flame.png");
+	partTextures[i++] = V_LoadTexture("res/Sphere.png");
 }
 
 void V_Init() {
@@ -51,6 +53,22 @@ void V_Init() {
 	mat4x4_identity(V_projMat);
 	mat4x4_identity(V_worldMat);
 	mat4x4_identity(V_modelMat);
+}
+
+int particleComparator(void* a, void* b) {
+	vec3 posA;
+	vec3 posB;
+	vec3_sub(posA, ((Particle*)a)->pos, camera->pos);
+	vec3_sub(posB, ((Particle*)b)->pos, camera->pos);
+	
+	if ((posA[0] * posA[0] + posA[1] * posA[1] + posA[2] * posA[2])
+			> (posB[0] * posB[0] + posB[1] * posB[1] + posB[2] * posB[2]))
+		return 1;
+	if ((posA[0] * posA[0] + posA[1] * posA[1] + posA[2] * posA[2])
+			< (posB[0] * posB[0] + posB[1] * posB[1] + posB[2] * posB[2]))
+		return -1;
+	
+	return 0;
 }
 
 void V_Tick() {
@@ -100,21 +118,27 @@ void V_Tick() {
 
 		V_RenderModel(ship);
 	}
+	
+	// Sortera partiklarna efter avstånd
+	ListBubbleSort(&G_particles, particleComparator);
 
 	// Rita partiklarna
 	V_UseTextures(false);
 	V_IsParticle(true);
+	V_SetDepthWriting(false);
 	V_PushState();
 	for (int i = 0; i < G_particles.size; i++) {
 		Particle* p = ListGet(&G_particles, i);
 		V_BindTexture(partTextures[p->texture], 0);
 
 		mat4x4_translate(V_modelMat, p->pos[0], p->pos[1], p->pos[2]);
+		mat4x4_scale(V_modelMat, V_modelMat, 1 / p->scale);
 
 		V_RenderModel(billboard);
 	}
 	V_PopState();
 	V_IsParticle(false);
+	V_SetDepthWriting(true);
 
 	V_PopState();
 

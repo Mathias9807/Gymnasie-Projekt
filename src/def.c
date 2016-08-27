@@ -93,6 +93,47 @@ void ListRemove(List* l, int index) {
 	l->size--;
 }
 
+void ListBubbleSort(List* l, int (*comparator)(void* a, void* b)) {
+	for (int i = 1; i < l->size; i++) {
+		ListEntry* prev = l->first;
+		ListEntry* cur = prev->next;
+		bool changed = false;
+		
+		for (int j = i; j < l->size; j++) {
+			if (!cur) break;
+			
+			int comp = comparator(prev->value, cur->value);
+			if (comp < 0) {
+				
+				// Byt cur och prev
+				prev->next = cur->next;
+				if (prev->next)
+					prev->next->prev = prev;
+				if (l->first == prev) {
+					l->first = cur;
+					cur->prev = NULL;
+				}else {
+					prev->prev->next = cur;
+					cur->prev = prev->prev;
+				}
+				cur->next = prev;
+				prev->prev = cur;
+				
+				ListEntry* tmp = cur;
+				cur = prev;
+				prev = tmp;
+				
+				changed = true;
+			}
+			
+			prev = prev->next;
+			cur = cur->next;
+		}
+		
+		if (!changed) break;
+	}
+}
+
 double min(double a, double b) {
 	return a < b ? a : b;
 }

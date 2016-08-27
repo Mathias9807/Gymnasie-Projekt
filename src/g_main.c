@@ -47,6 +47,25 @@ void G_InitLevel() {
 
 	Particle* p = calloc(1, sizeof(Particle));
 	memcpy(p->pos, (vec3) {20, 0, 0}, sizeof(vec3));
+	p->scale = 1;
+	ListAdd(&G_particles, p);
+	
+	p = calloc(1, sizeof(Particle));
+	memcpy(p->pos, (vec3) {20, 5, 10}, sizeof(vec3));
+	p->texture = 2;
+	p->scale = 5;
+	ListAdd(&G_particles, p);
+	
+	p = calloc(1, sizeof(Particle));
+	memcpy(p->pos, (vec3) {25, 5, 10}, sizeof(vec3));
+	p->texture = 2;
+	p->scale = 5;
+	ListAdd(&G_particles, p);
+	
+	p = calloc(1, sizeof(Particle));
+	memcpy(p->pos, (vec3) {22.5f, 5, 15}, sizeof(vec3));
+	p->texture = 2;
+	p->scale = 5;
 	ListAdd(&G_particles, p);
 	
 	V_SetCamera(&cam);

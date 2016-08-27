@@ -50,6 +50,7 @@ int ListFind(List* l, void* value);
 int ListSize(List* l);
 void ListAdd(List* l, void* value);
 void ListRemove(List* l, int index);
+void ListBubbleSort(List* l, int (*comparator)(void* a, void* b));
 
 double min(double a, double b);
 double max(double a, double b);

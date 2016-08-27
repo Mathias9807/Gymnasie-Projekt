@@ -122,6 +122,12 @@ void V_ApplyCamera() {
 
 		mat4x4_translate_in_place(V_worldMat, 
 			-f->pos[0], -f->pos[1], -f->pos[2]);
+			
+		mat4x4 inv;
+		vec4 v;
+		mat4x4_invert(inv, V_worldMat);
+		mat4x4_mul_vec4(v, inv, (vec4) {0, 0, 0, 1});
+		memcpy(camera->pos, v, sizeof(vec3));
 	}else {
 		mat4x4_rotate_X(V_worldMat, V_worldMat, -M_PI / 2 + cam.rot[0]);
 		mat4x4_rotate_Z(V_worldMat, V_worldMat, +cam.rot[2]);
