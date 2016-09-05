@@ -17,6 +17,9 @@ typedef struct {
 	vec3 pos, vel;
 	mat4x4 rot;
 
+	vec3 pOffs; // Visuella förskjutningar
+	float zOffs;
+
 	// För accelerationsfunktionen
 	float accT, accTFactor, accSpeed;
 

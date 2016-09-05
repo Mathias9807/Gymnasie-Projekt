@@ -115,6 +115,9 @@ void V_Tick() {
 
 		mat4x4_translate(V_modelMat, s->pos[0], s->pos[1], s->pos[2]);
 		mat4x4_mul(V_modelMat, V_modelMat, s->rot);
+		mat4x4_translate_in_place(V_modelMat,
+			s->pOffs[0], s->pOffs[1], s->pOffs[2]);
+		mat4x4_rotate_Z(V_modelMat, V_modelMat, s->zOffs);
 
 		V_RenderModel(ship);
 	}
