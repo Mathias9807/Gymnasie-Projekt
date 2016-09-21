@@ -38,7 +38,7 @@ void G_InitLevel() {
 
 	Ship* s = calloc(1, sizeof(Ship));
 	mat4x4_identity(s->rot);
-	mat4x4_rotate_Y(s->rot, s->rot, M_PI);
+	//mat4x4_rotate_Y(s->rot, s->rot, M_PI);
 	memcpy(s->pos, (vec3) {1, 1, -50}, sizeof(vec3));
 	s->accTFactor	= 0.4;
 	s->accSpeed	= 16;
