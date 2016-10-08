@@ -47,6 +47,7 @@ void SYS_UpdateInput() {
 			       - state[SDL_SCANCODE_LEFT];
 			
 			SYS_var[IN_BOOST] = state[SDL_SCANCODE_LSHIFT];
+			SYS_keys[IN_ATTACK] = state[SDL_SCANCODE_RCTRL];
 			SYS_keys[IN_QUIT] = state[SDL_SCANCODE_Q];
 			break;
 		}
@@ -79,6 +80,9 @@ void SYS_UpdateInput() {
 					SDL_CONTROLLER_AXIS_TRIGGERLEFT);
 			if (abs(d) <= SYS_DEADZONE) d = 0;
 			SYS_var[IN_BOOST] = d / (double) SHRT_MAX;
+
+			SYS_keys[IN_ATTACK] = SDL_GameControllerGetAxis(
+					SYS_controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT) > SYS_DEADZONE;
 
 			SYS_keys[IN_QUIT] = SDL_GameControllerGetButton(
 					SYS_controller, SDL_CONTROLLER_BUTTON_BACK);
