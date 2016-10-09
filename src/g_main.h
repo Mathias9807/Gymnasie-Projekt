@@ -31,8 +31,17 @@ typedef struct {
 	
 	vec3 pos, vel;
 	float scale;
+	
+	double spawnTime, lifeTime;
 } Particle;
 extern List G_particles;
+
+typedef struct {
+	Particle* p;
+	
+	double spawnTime, lifeTime;
+} Bullet;
+extern List G_bullets;
 
 // Because windows is the best OS
 #undef near

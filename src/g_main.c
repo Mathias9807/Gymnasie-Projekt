@@ -16,6 +16,7 @@
 List G_ships;
 Ship* G_player;
 List G_particles;
+List G_bullets;
 
 // Läs in kameran
 Camera cam = {
@@ -118,6 +119,50 @@ void G_Tick() {
 		for (int i = 0; i < 3; i++)
 			s->pos[i] += s->vel[i] * SYS_dSec;
 	}
+
+	// Applicera hastigheten till alla partiklar
+	for (int i = 0; i < G_particles.size; i++) {
+		Particle* p = ListGet(&G_particles, i);
+		
+		if (p->spawnTime && SYS_GetTime() - p->spawnTime > p->lifeTime) {
+			ListRemove(&G_particles, i);
+			i--;
+			continue;
+		}
+		
+		for (int j = 0; j < 3; j++)
+			p->pos[j] += p->vel[j] * SYS_dSec;
+	}
+
+	// Ta bort gamla skott
+	for (int i = 0; i < G_bullets.size; i++) {
+		Bullet* b = ListGet(&G_bullets, i);
+		
+		if (b->spawnTime && SYS_GetTime() - b->spawnTime > b->lifeTime) {
+			ListRemove(&G_particles, ListFind(&G_particles, b->p));
+			ListRemove(&G_bullets, i);
+			
+			i--;
+			continue;
+		}
+	}
+	
+	static bool atkHeld = false;
+	if (SYS_keys[IN_ATTACK] && !atkHeld) {
+		Bullet* b = calloc(1, sizeof(Bullet));
+		b->p = calloc(1, sizeof(Particle));
+		b->p->texture = 2;
+		b->p->scale = 0.3;
+		b->lifeTime = 1;
+		b->spawnTime = SYS_GetTime();
+		memcpy(b->p->pos, G_player->pos, sizeof(vec3));
+		vec4 v = {0, 0, -30, 0}, r;
+		mat4x4_mul_vec4(r, G_player->rot, v);
+		memcpy(b->p->vel, r, sizeof(vec3));
+		ListAdd(&G_bullets, b);
+		ListAdd(&G_particles, b->p);
+	}
+	atkHeld = SYS_keys[IN_ATTACK];
 
 	if (SYS_keys[IN_QUIT]) SYS_running = false;
 
