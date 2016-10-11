@@ -156,7 +156,7 @@ void G_Tick() {
 		b->lifeTime = 1;
 		b->spawnTime = SYS_GetTime();
 		memcpy(b->p->pos, G_player->pos, sizeof(vec3));
-		vec4 v = {0, 0, -30, 0}, r;
+		vec4 v = {0, 0, -50, 0}, r;
 		mat4x4_mul_vec4(r, G_player->rot, v);
 		memcpy(b->p->vel, r, sizeof(vec3));
 		ListAdd(&G_bullets, b);
