@@ -18,6 +18,7 @@ Camera* camera;
 
 Model* ship, * cube;
 Model* plane;
+Model* unitPlane;
 Model* billboard;
 
 // Alla partikel texturer
@@ -25,15 +26,19 @@ Model* billboard;
 int partTextures[NUM_PART_TEXTURES];
 
 int tex, schack;
+int crosshair1, crosshair2;
 
 void LoadResources() {
 	ship = V_LoadModel("res/Ship/Ship.dae");
 	cube = V_LoadModel("res/cube.dae");
 	plane = V_LoadModel("res/Plane.dae");
+	unitPlane = V_LoadModel("res/unit-plane.dae");
 	billboard = V_LoadModel("res/billboard.dae");
 
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
 	schack = V_LoadTexture("res/Schack.png");
+	crosshair1 = V_LoadTexture("res/square-crosshair.png");
+	crosshair2 = V_LoadTexture("res/diamond-crosshair.png");
 
 	int i = 0;
 	partTextures[i++] = V_LoadTexture("res/Smoke.png");
@@ -74,8 +79,12 @@ int particleComparator(void* a, void* b) {
 void V_Tick() {
 	mat4x4 tmp;
 
+	mat4x4_identity(V_modelMat);
 	mat4x4_identity(V_worldMat);
 	V_ApplyCamera();
+
+	V_SetDepthWriting(true);
+	V_SetDepthTesting(true);
 
 	// Rensa skärmen
 	V_ClearColor(0, 0, 0.4, 0);
@@ -141,9 +150,32 @@ void V_Tick() {
 	}
 	V_PopState();
 	V_IsParticle(false);
-	V_SetDepthWriting(true);
+	V_SetDepthWriting(false);
+	V_SetDepthTesting(false);
 
 	V_PopState();
+	V_UseTextures(true);
+
+	// Rita det närmre siktet
+	mat4x4_translate(V_modelMat,
+		G_player->pos[0], G_player->pos[1], G_player->pos[2]);
+	mat4x4_mul(V_modelMat, V_modelMat, G_player->rot);
+	mat4x4_translate_in_place(V_modelMat, 0, 0, -20);
+	mat4x4_rotate_X(V_modelMat, V_modelMat, M_PI / 2);
+
+	V_BindTexture(crosshair1, 0);
+	V_RenderModel(unitPlane);
+
+	// Rita siktet längre bort
+	mat4x4_translate(V_modelMat,
+		G_player->pos[0], G_player->pos[1], G_player->pos[2]);
+	mat4x4_mul(V_modelMat, V_modelMat, G_player->rot);
+	mat4x4_translate_in_place(V_modelMat, 0, 0, -60);
+	mat4x4_rotate_X(V_modelMat, V_modelMat, M_PI / 2);
+	mat4x4_scale_aniso(V_modelMat, V_modelMat, 2, 2, 2);
+
+	V_BindTexture(crosshair2, 0);
+	V_RenderModel(unitPlane);
 
 	// Kolla så att allt gick bra
 	SYS_CheckErrors();
