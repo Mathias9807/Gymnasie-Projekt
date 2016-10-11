@@ -47,7 +47,7 @@ void SYS_UpdateInput() {
 			       - state[SDL_SCANCODE_LEFT];
 			
 			SYS_var[IN_BOOST] = state[SDL_SCANCODE_LSHIFT];
-			SYS_keys[IN_ATTACK] = state[SDL_SCANCODE_RCTRL];
+			SYS_keys[IN_ATTACK] = state[SDL_SCANCODE_SPACE];
 			SYS_keys[IN_QUIT] = state[SDL_SCANCODE_Q];
 			break;
 		}
