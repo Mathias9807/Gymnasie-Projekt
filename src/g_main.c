@@ -21,7 +21,7 @@ List G_bullets;
 // Läs in kameran
 Camera cam = {
 	.pOffs = {0, 2, 4}, .rOffs = {-M_PI / 16, 0},
-	.fov = 45, .near = 0.1, .far = 100
+	.fov = 45, .near = 0.1, .far = 300
 };
 
 // Ökningen i hastighet när ett skepp boostar
