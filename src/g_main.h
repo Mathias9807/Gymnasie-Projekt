@@ -24,6 +24,8 @@ typedef struct {
 	float accT, accTFactor, accSpeed;
 
 	float baseSpeed;
+
+	void (*tick)();
 } Ship;
 
 extern List G_ships;

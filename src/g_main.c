@@ -24,6 +24,8 @@ Camera cam = {
 	.fov = 45, .near = 0.1, .far = 300
 };
 
+void playerTick();
+
 // Ökningen i hastighet när ett skepp boostar
 double acceleration(double t) {
 	return 3 * t * t - 2 * t * t * t;
@@ -35,6 +37,7 @@ void G_InitLevel() {
 	G_player->accTFactor	= 1.2;
 	G_player->accSpeed	= 16;
 	G_player->baseSpeed	= 8;
+	G_player->tick		= playerTick;
 	ListAdd(&G_ships, G_player);
 
 	Ship* s = calloc(1, sizeof(Ship));
@@ -76,33 +79,13 @@ void G_InitLevel() {
 void G_Tick() {
 	SYS_UpdateInput();
 
-	// Rörelse relativt till kameran
-	float boost = 0;
-	boost += SYS_dSec * (SYS_var[IN_BOOST] * 2 - 1);
-	G_player->accT += boost * G_player->accTFactor;
-	G_player->accT = min(G_player->accT, 1);
-	G_player->accT = max(G_player->accT, 0);
+	// Kör de individuella skeppens logik
+	for (int i = 0; i < G_ships.size; i++) {
+		Ship* s = ListGet(&G_ships, i);
 
-	// Rotation relativt till skeppets orientation
-	double vert = 0, horiz = 0, tilt = 0;
-	vert += SYS_var[IN_RVERT] - SYS_var[IN_LVERT];
-	// vert = min(vert, 1);
-	horiz += SYS_var[IN_RHORIZ];
-	tilt += SYS_var[IN_LHORIZ];
-	
-	vec4 zAxis, yAxis, xAxis;
-	mat4x4 rot;
-	mat4x4_identity(rot);
-	mat4x4_mul_vec4(zAxis, G_player->rot, (vec4) {0, 0, 1, 0});
-	mat4x4_mul_vec4(yAxis, G_player->rot, (vec4) {0, 1, 0, 0});
-	mat4x4_mul_vec4(xAxis, G_player->rot, (vec4) {1, 0, 0, 0});
-	mat4x4_rotate(rot, rot, xAxis[0], xAxis[1], xAxis[2], 
-		vert * SYS_dSec);
-	mat4x4_rotate(rot, rot, yAxis[0], yAxis[1], yAxis[2], 
-		-horiz * SYS_dSec);
-	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
-		-tilt * SYS_dSec);
-	mat4x4_mul(G_player->rot, rot, G_player->rot);
+		if (s->tick)
+			s->tick();
+	}
 
 	// Applicera hastigheten och accelerationen på alla skepp
 	for (int i = 0; i < G_ships.size; i++) {
@@ -146,25 +129,6 @@ void G_Tick() {
 			continue;
 		}
 	}
-	
-	static bool atkHeld = false;
-	if (SYS_keys[IN_ATTACK] && !atkHeld) {
-		Bullet* b = calloc(1, sizeof(Bullet));
-		b->p = calloc(1, sizeof(Particle));
-		b->p->texture = 2;
-		b->p->scale = 0.3;
-		b->lifeTime = 1;
-		b->spawnTime = SYS_GetTime();
-		memcpy(b->p->pos, G_player->pos, sizeof(vec3));
-		vec4 v = {0, 0, -50, 0}, r;
-		mat4x4_mul_vec4(r, G_player->rot, v);
-		memcpy(b->p->vel, r, sizeof(vec3));
-		ListAdd(&G_bullets, b);
-		ListAdd(&G_particles, b->p);
-	}
-	atkHeld = SYS_keys[IN_ATTACK];
-
-	if (SYS_keys[IN_QUIT]) SYS_running = false;
 
 	// Flytta kameran till skeppet i fokus
 	if (cam.ghost) {
@@ -190,5 +154,54 @@ void G_Tick() {
 			for (int j = 0; j < 4; j++) 
 				g->rot[i][j] = interp(f->rot[i][j], g->rot[i][j], tR);
 	}
+}
+
+void playerTick() {
+	// Beräkna den nya accelerationen
+	float boost = 0;
+	boost += SYS_dSec * (SYS_var[IN_BOOST] * 2 - 1);
+	G_player->accT += boost * G_player->accTFactor;
+	G_player->accT = min(G_player->accT, 1);
+	G_player->accT = max(G_player->accT, 0);
+
+	// Hämta rotationen relativt till skeppets nuvarande orientation
+	double vert = 0, horiz = 0, tilt = 0;
+	vert += SYS_var[IN_RVERT] - SYS_var[IN_LVERT];
+	horiz += SYS_var[IN_RHORIZ];
+	tilt += SYS_var[IN_LHORIZ];
+	
+	// Beräkna nya orientationen
+	vec4 zAxis, yAxis, xAxis;
+	mat4x4 rot;
+	mat4x4_identity(rot);
+	mat4x4_mul_vec4(zAxis, G_player->rot, (vec4) {0, 0, 1, 0});
+	mat4x4_mul_vec4(yAxis, G_player->rot, (vec4) {0, 1, 0, 0});
+	mat4x4_mul_vec4(xAxis, G_player->rot, (vec4) {1, 0, 0, 0});
+	mat4x4_rotate(rot, rot, xAxis[0], xAxis[1], xAxis[2], 
+		vert * SYS_dSec);
+	mat4x4_rotate(rot, rot, yAxis[0], yAxis[1], yAxis[2], 
+		-horiz * SYS_dSec);
+	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
+		-tilt * SYS_dSec);
+	mat4x4_mul(G_player->rot, rot, G_player->rot);
+
+	static bool atkHeld = false;
+	if (SYS_keys[IN_ATTACK] && !atkHeld) {
+		Bullet* b = calloc(1, sizeof(Bullet));
+		b->p = calloc(1, sizeof(Particle));
+		b->p->texture = 2;
+		b->p->scale = 0.3;
+		b->lifeTime = 1;
+		b->spawnTime = SYS_GetTime();
+		memcpy(b->p->pos, G_player->pos, sizeof(vec3));
+		vec4 v = {0, 0, -50, 0}, r;
+		mat4x4_mul_vec4(r, G_player->rot, v);
+		memcpy(b->p->vel, r, sizeof(vec3));
+		ListAdd(&G_bullets, b);
+		ListAdd(&G_particles, b->p);
+	}
+	atkHeld = SYS_keys[IN_ATTACK];
+
+	if (SYS_keys[IN_QUIT]) SYS_running = false;
 }
 
