@@ -13,7 +13,7 @@
 
 #include "def.h"
 
-typedef struct {
+typedef struct Ship {
 	vec3 pos, vel;
 	mat4x4 rot;
 
@@ -25,7 +25,7 @@ typedef struct {
 
 	float baseSpeed;
 
-	void (*tick)();
+	void (*tick)(struct Ship*);
 } Ship;
 
 extern List G_ships;

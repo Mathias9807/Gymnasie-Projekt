@@ -24,8 +24,9 @@ Camera cam = {
 	.fov = 45, .near = 0.1, .far = 300
 };
 
-void playerTick();
 void RotateShip(Ship* s, float x, float y, float z);
+void playerTick(Ship* s);
+void aiBasicTick(Ship* s);
 
 // Ökningen i hastighet när ett skepp boostar
 double acceleration(double t) {
@@ -48,6 +49,7 @@ void G_InitLevel() {
 	s->accTFactor	= 0.4;
 	s->accSpeed	= 16;
 	s->baseSpeed	= 8;
+	s->tick		= aiBasicTick;
 	ListAdd(&G_ships, s);
 
 	Particle* p = calloc(1, sizeof(Particle));
@@ -85,7 +87,7 @@ void G_Tick() {
 		Ship* s = ListGet(&G_ships, i);
 
 		if (s->tick)
-			s->tick();
+			s->tick(s);
 	}
 
 	// Applicera hastigheten och accelerationen på alla skepp
@@ -157,7 +159,7 @@ void G_Tick() {
 	}
 }
 
-void playerTick() {
+void playerTick(Ship* s) {
 	// Beräkna den nya accelerationen
 	float boost = 0;
 	boost += SYS_dSec * (SYS_var[IN_BOOST] * 2 - 1);
@@ -171,7 +173,7 @@ void playerTick() {
 	horiz += SYS_var[IN_RHORIZ];
 	tilt += SYS_var[IN_LHORIZ];
 	
-	RotateShip(G_player, vert, horiz, tilt);
+	RotateShip(G_player, vert * SYS_dSec, horiz * SYS_dSec, tilt * SYS_dSec);
 
 	static bool atkHeld = false;
 	if (SYS_keys[IN_ATTACK] && !atkHeld) {
@@ -191,6 +193,10 @@ void playerTick() {
 	atkHeld = SYS_keys[IN_ATTACK];
 
 	if (SYS_keys[IN_QUIT]) SYS_running = false;
+}
+
+void aiBasicTick(Ship* s) {
+	RotateShip(s, 0, 0, 1 * SYS_dSec);
 }
 
 // Roterar ett skepp (x = pitch, y = yaw, z = roll)
