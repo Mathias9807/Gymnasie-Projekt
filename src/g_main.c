@@ -25,6 +25,7 @@ Camera cam = {
 };
 
 void playerTick();
+void RotateShip(Ship* s, float x, float y, float z);
 
 // Ökningen i hastighet när ett skepp boostar
 double acceleration(double t) {
@@ -170,20 +171,7 @@ void playerTick() {
 	horiz += SYS_var[IN_RHORIZ];
 	tilt += SYS_var[IN_LHORIZ];
 	
-	// Beräkna nya orientationen
-	vec4 zAxis, yAxis, xAxis;
-	mat4x4 rot;
-	mat4x4_identity(rot);
-	mat4x4_mul_vec4(zAxis, G_player->rot, (vec4) {0, 0, 1, 0});
-	mat4x4_mul_vec4(yAxis, G_player->rot, (vec4) {0, 1, 0, 0});
-	mat4x4_mul_vec4(xAxis, G_player->rot, (vec4) {1, 0, 0, 0});
-	mat4x4_rotate(rot, rot, xAxis[0], xAxis[1], xAxis[2], 
-		vert * SYS_dSec);
-	mat4x4_rotate(rot, rot, yAxis[0], yAxis[1], yAxis[2], 
-		-horiz * SYS_dSec);
-	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
-		-tilt * SYS_dSec);
-	mat4x4_mul(G_player->rot, rot, G_player->rot);
+	RotateShip(G_player, vert, horiz, tilt);
 
 	static bool atkHeld = false;
 	if (SYS_keys[IN_ATTACK] && !atkHeld) {
@@ -203,5 +191,22 @@ void playerTick() {
 	atkHeld = SYS_keys[IN_ATTACK];
 
 	if (SYS_keys[IN_QUIT]) SYS_running = false;
+}
+
+// Roterar ett skepp (x = pitch, y = yaw, z = roll)
+void RotateShip(Ship* s, float x, float y, float z) {
+	vec4 zAxis, yAxis, xAxis;
+	mat4x4 rot;
+	mat4x4_identity(rot);
+	mat4x4_mul_vec4(zAxis, s->rot, (vec4) {0, 0, 1, 0});
+	mat4x4_mul_vec4(yAxis, s->rot, (vec4) {0, 1, 0, 0});
+	mat4x4_mul_vec4(xAxis, s->rot, (vec4) {1, 0, 0, 0});
+	mat4x4_rotate(rot, rot, xAxis[0], xAxis[1], xAxis[2], 
+		x);
+	mat4x4_rotate(rot, rot, yAxis[0], yAxis[1], yAxis[2], 
+		-y);
+	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
+		-z);
+	mat4x4_mul(s->rot, rot, s->rot);
 }
 
