@@ -1,5 +1,7 @@
 #version 100
 
+precision mediump float;
+
 attribute vec3 vertex_in;
 attribute vec3 color_in;
 attribute vec2 uv_in;
