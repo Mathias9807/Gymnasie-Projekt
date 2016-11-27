@@ -15,6 +15,7 @@
 #include "v_main.h"
 #include "g_main.h"
 #include "s_main.h"
+#include "gui_main.h"
 
 SDL_Window* window;
 extern SDL_GameController* SYS_controller;
@@ -214,8 +215,10 @@ int main(int argc, char* argv[]) {
 
 		SYS_CheckEvents();
 		G_Tick();
+		GUI_Tick();
 		S_Tick();
 		V_Tick();
+		GUI_Render();
 		SYS_UpdateWindow();
 
 		SYS_CheckErrors();

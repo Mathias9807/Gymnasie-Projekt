@@ -15,6 +15,8 @@ Källkods filer:
 	SYS_input:	Läser tangentbordet och ger en abstraktion av
 				kontrollerna.
 
+	GUI_main:	GUI hantering
+
 SYS_main.c:main
 Programmet startar
 
@@ -52,9 +54,31 @@ SYS_audio {
 
 V_main {
 	V_Init() Laddar grafikresurser och OpenGL
-	V_Tick() Ritar scenen
+	V_Tick() Ritar scenen och all UI
 }
 
 G_main {
 	G_Tick() Kallar fysik funktionerna och flyttar skeppen
 }
+
+GUI_main {
+	struct MenuComp {	En komponent t.ex en knapp, en textruta
+		enum compType	Vilken slags komponent objektet representerar
+		vec2 pos, size	Var komponenten ligger och storleken (0-1)
+
+		union {
+			All komponentdata
+		}
+	}
+
+	struct Menu {		En menyskärm t.ex pausmenyn, startmenyn
+		list comps	Listan med komponenter
+	}
+
+	Menu currentMenu	Den nuvarande menyn
+
+	GUI_Tick()		Läs knapptrycken och uppdatera UI:n
+	GUI_Render()		Ritar ut menyn och alla komponenter
+	GUI_RenderComp(MenuComp)Ritar ut en komponent
+}
+
