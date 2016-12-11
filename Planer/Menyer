@@ -1,0 +1,21 @@
+Main menu
+	- Play
+		- Free for all
+			- Game settings
+				- Num of bots
+				- Difficulty
+				- (Spectator mode)
+				- Start game
+
+		- Team deathmatch
+			- Game settings
+				- Num of bots on players team
+				- Difficulty
+				- Num of bots on opposite team
+				- Difficulty
+				- (Spectator mode)
+				- Start game
+
+	- Controls
+
+	- Quit
