@@ -41,6 +41,7 @@ typedef struct {
 extern Menu*		currentMenu;
 
 
+void GUI_Init();
 void GUI_Tick();
 void GUI_Render();
 void GUI_RenderComp(MenuComp* comp);

@@ -28,7 +28,7 @@ typedef struct {
 	int numVerts;
 } Model;
 
-extern GLuint curShader;
+extern GLuint curShader, shader, guiShader;
 extern float V_vertFov;
 
 Model* V_LoadModel(const char* path);

@@ -24,7 +24,7 @@
 
 extern Camera* camera;
 
-GLuint shader = 0;
+GLuint curShader, shader = 0, guiShader = 0;
 int vertAttrib = 0, colAttrib = 1, uvAttrib = 2, nrmAttrib = 3;
 
 mat4x4 V_projMat, V_worldMat, V_modelMat;
@@ -49,14 +49,24 @@ void V_StartOpenGL() {
 		SYS_Error("GLEW failed to initialize");
 #endif
 
-	// Ladda shader programmet
+	// Ladda shader programmen
 	shader = V_LoadShader("shader");
-	glUseProgram(shader);
+	guiShader = V_LoadShader("gui");
+	V_SetShader(shader);
 
-	vertAttrib = glGetAttribLocation(shader, "vertex_in");
-	colAttrib = glGetAttribLocation(shader, "color_in");
-	nrmAttrib = glGetAttribLocation(shader, "normal_in");
-	uvAttrib = glGetAttribLocation(shader, "uv_in");
+	// Sätt attributernas index
+	glBindAttribLocation(shader, vertAttrib, "vertex_in");
+	glBindAttribLocation(shader, colAttrib, "color_in");
+	glBindAttribLocation(shader, nrmAttrib, "normal_in");
+	glBindAttribLocation(shader, uvAttrib, "uv_in");
+	glBindAttribLocation(guiShader, vertAttrib, "vertex_in");
+	glBindAttribLocation(guiShader, uvAttrib, "uv_in");
+
+	// Hämta attributens index
+	// vertAttrib = glGetAttribLocation(shader, "vertex_in");
+	// colAttrib = glGetAttribLocation(shader, "color_in");
+	// nrmAttrib = glGetAttribLocation(shader, "normal_in");
+	// uvAttrib = glGetAttribLocation(shader, "uv_in");
 
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
@@ -339,27 +349,32 @@ GLuint V_LoadShader(const char* name) {
 }
 
 void V_RenderModel(Model* m) {
-	mat4x4 tmp, tmp2;
-	mat4x4_mul(tmp, V_worldMat, V_modelMat);
-	mat4x4_mul(tmp2, V_projMat, tmp);
-	V_SetParam4m("proj_mat", tmp2);
+	if (curShader == shader) {
+		mat4x4 tmp, tmp2;
+		mat4x4_mul(tmp, V_worldMat, V_modelMat);
+		mat4x4_mul(tmp2, V_projMat, tmp);
+		V_SetParam4m("proj_mat", tmp2);
 
-	mat4x4_identity(tmp);
-	mat4x4_mul(tmp2, tmp, V_modelMat);
-	mat4x4_transpose(tmp, tmp2);
-	mat4x4_invert(tmp2, tmp);
-	V_SetParam4m("norm_mat", tmp2);
+		mat4x4_identity(tmp);
+		mat4x4_mul(tmp2, tmp, V_modelMat);
+		mat4x4_transpose(tmp, tmp2);
+		mat4x4_invert(tmp2, tmp);
+		V_SetParam4m("norm_mat", tmp2);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, m->vertId);
 
 	glVertexAttribPointer(vertAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
 	glEnableVertexAttribArray(vertAttrib);
-	glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 12);
-	glEnableVertexAttribArray(colAttrib);
 	glVertexAttribPointer(uvAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 24);
 	glEnableVertexAttribArray(uvAttrib);
-	glVertexAttribPointer(nrmAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 32);
-	glEnableVertexAttribArray(nrmAttrib);
+
+	if (curShader == shader) {
+		glVertexAttribPointer(nrmAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 32);
+		glEnableVertexAttribArray(nrmAttrib);
+		glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*) 12);
+		glEnableVertexAttribArray(colAttrib);
+	}
 
 	glDrawArrays(GL_TRIANGLES, 0, m->numVerts);
 }
@@ -395,25 +410,34 @@ void V_BindTexture(unsigned id, int pos) {
 	glBindTexture(GL_TEXTURE_2D, id);
 }
 
+void V_SetShader(GLuint s) {
+	glUseProgram(s);
+	curShader = s;
+	vertAttrib = glGetAttribLocation(s, "vertex_in");
+	colAttrib = glGetAttribLocation(s, "color_in");
+	nrmAttrib = glGetAttribLocation(s, "normal_in");
+	uvAttrib = glGetAttribLocation(s, "uv_in");
+}
+
 void V_SetParam4m(const char* var, mat4x4 mat) {
-	GLuint id = glGetUniformLocation(shader, var);
+	GLuint id = glGetUniformLocation(curShader, var);
 	float fArr[16];
 	for (int i = 0; i < 16; i++) fArr[i] = mat[i / 4][i % 4];
 	glUniformMatrix4fv(id, 1, GL_FALSE, fArr);
 }
 
 void V_SetParam1i(const char* var, int i) {
-	GLuint id = glGetUniformLocation(shader, var);
+	GLuint id = glGetUniformLocation(curShader, var);
 	glUniform1i(id, i);
 }
 
 void V_SetParam1f(const char* var, float f) {
-	GLuint id = glGetUniformLocation(shader, var);
+	GLuint id = glGetUniformLocation(curShader, var);
 	glUniform1f(id, f);
 }
 
 void V_SetParam2f(const char* var, float x, float y) {
-	GLuint id = glGetUniformLocation(shader, var);
+	GLuint id = glGetUniformLocation(curShader, var);
 	glUniform2f(id, x, y);
 }
 

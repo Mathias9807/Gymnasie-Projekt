@@ -204,6 +204,8 @@ int main(int argc, char* argv[]) {
 	
 	G_InitLevel();
 
+	GUI_Init();
+
 	S_Init();
 
 	double now = SDL_GetTicks() / 1000.0;

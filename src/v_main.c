@@ -25,7 +25,7 @@ Model* billboard;
 #define NUM_PART_TEXTURES 8
 int partTextures[NUM_PART_TEXTURES];
 
-int tex, schack;
+int tex, schack, abstractBox;
 int crosshair1, crosshair2;
 
 void LoadResources() {
@@ -37,6 +37,7 @@ void LoadResources() {
 
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
 	schack = V_LoadTexture("res/Schack.png");
+	abstractBox = V_LoadTexture("res/Abstract Box.png");
 	crosshair1 = V_LoadTexture("res/square-crosshair.png");
 	crosshair2 = V_LoadTexture("res/diamond-crosshair.png");
 
@@ -51,6 +52,9 @@ void V_Init() {
 	V_StartOpenGL();
 	LoadResources();
 
+	V_SetShader(guiShader);
+	V_SetParam1i("tex", 0);
+	V_SetShader(shader);
 	V_SetParam1i("diffuse_tex", 0);
 
 	V_SetDepthTesting(true);
