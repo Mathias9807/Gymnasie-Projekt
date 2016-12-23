@@ -16,6 +16,8 @@
 // Kameran som ritar scenen
 Camera* camera;
 
+vec2 parallaxShift;
+
 Model* ship, * cube;
 Model* plane;
 Model* unitPlane;
@@ -81,6 +83,28 @@ int particleComparator(void* a, void* b) {
 }
 
 void V_Tick() {
+	// Uppdatera parallax vektorn
+	if (camera && camera->focus) {
+		Ship* focus = camera->focus;
+		Ship* ghost = camera->ghost;
+
+		// Applicera rotations marticen och gångra sen med inversen
+		// av spökets rotationsmatris för att få skillnaden
+		vec4 r, v = {0, 0, -1, 1};
+		mat4x4_mul_vec4(r, focus->rot, v);
+
+		mat4x4 inv;
+		mat4x4_invert(inv, ghost->rot);
+
+		memcpy(v, r, sizeof(vec4));
+		mat4x4_mul_vec4(r, inv, v);
+
+		memcpy(parallaxShift, r, sizeof(vec2));
+	}else {
+		parallaxShift[0] = 0.0;
+		parallaxShift[1] = 0.0;
+	}
+
 	mat4x4 tmp;
 
 	mat4x4_identity(V_modelMat);

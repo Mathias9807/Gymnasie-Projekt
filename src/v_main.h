@@ -25,6 +25,8 @@ extern double V_fov, V_near, V_far;
 
 extern mat4x4 V_projMat, V_worldMat, V_modelMat;
 
+extern vec2 parallaxShift; // Parallax camera shifting
+
 void V_Init();
 void V_Tick();
 void V_SetCamera(Camera* c);
