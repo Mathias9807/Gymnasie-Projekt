@@ -8,6 +8,7 @@
  */
 
 #include "g_main.h"
+#include "gui_main.h"
 #include "sys_input.h"
 #include "sys_main.h"
 #include "v_main.h"
@@ -81,6 +82,9 @@ void G_InitLevel() {
 
 void G_Tick() {
 	SYS_UpdateInput();
+
+	// Stäng ner programmet vid begäran
+	if (SYS_keys[IN_QUIT]) SYS_running = false;
 
 	// Kör de individuella skeppens logik
 	for (int i = 0; i < G_ships.size; i++) {
@@ -160,6 +164,8 @@ void G_Tick() {
 }
 
 void playerTick(Ship* s) {
+	if (GUI_focusGrabbed) return;
+
 	// Beräkna den nya accelerationen
 	float boost = 0;
 	boost += SYS_dSec * (SYS_var[IN_BOOST] * 2 - 1);
@@ -191,8 +197,6 @@ void playerTick(Ship* s) {
 		ListAdd(&G_particles, b->p);
 	}
 	atkHeld = SYS_keys[IN_ATTACK];
-
-	if (SYS_keys[IN_QUIT]) SYS_running = false;
 }
 
 void aiBasicTick(Ship* s) {

@@ -15,17 +15,18 @@
 #include "v_opengl.h"
 
 
-Menu* currentMenu = NULL;
+Menu* GUI_currentMenu = NULL;
+bool GUI_focusGrabbed = false; // Om menyerna tar tangentbordsfokuset
 
 // Modellen som används för att rita ut rektanglar
 extern Model* unitPlane;
 
 extern int abstractBox;
 
-Menu* CreateMainMenu();
+void OpenMainMenu();
 
 void GUI_Init() {
-	currentMenu = CreateMainMenu();
+	OpenMainMenu();
 }
 
 void GUI_Tick() {
@@ -33,11 +34,11 @@ void GUI_Tick() {
 
 // Rita menyn
 void GUI_Render() {
-	if (!currentMenu) return;
+	if (!GUI_currentMenu) return;
 
 	V_SetDepthTesting(false);
 	V_SetShader(guiShader);
-	ListEntry* le = currentMenu->comps.first;
+	ListEntry* le = GUI_currentMenu->comps.first;
 	do {
 		GUI_RenderComp(le->value);
 	}while (le->next && (le = le->next));
@@ -57,7 +58,7 @@ void GUI_RenderComp(MenuComp* comp) {
 	}
 }
 
-Menu* CreateMainMenu() {
+void OpenMainMenu() {
 	Menu* m		= calloc(1, sizeof(Menu));
 	MenuComp* c	= calloc(1, sizeof(MenuComp));
 	c->type		= Box;
@@ -68,6 +69,7 @@ Menu* CreateMainMenu() {
 	c2->parallax	= 0.5;
 	ListAdd(&m->comps, c);
 
-	return m;
+	GUI_currentMenu = m;
+	GUI_focusGrabbed = true;
 }
 

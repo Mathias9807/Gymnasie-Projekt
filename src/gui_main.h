@@ -39,7 +39,8 @@ typedef struct {
 	List		comps;
 } Menu;
 
-extern Menu*		currentMenu;
+extern Menu*		GUI_currentMenu;
+extern bool		GUI_focusGrabbed;
 
 
 void GUI_Init();
