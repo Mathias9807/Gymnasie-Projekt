@@ -19,6 +19,8 @@ Ship* G_player;
 List G_particles;
 List G_bullets;
 
+Ai playerAi, stupidAi;
+
 // Läs in kameran
 Camera cam = {
 	.pOffs = {0, 2, 4}, .rOffs = {-M_PI / 16, 0},
@@ -35,23 +37,12 @@ double acceleration(double t) {
 }
 
 void G_InitLevel() {
-	G_player = calloc(1, sizeof(Ship));
-	mat4x4_identity(G_player->rot);
-	G_player->accTFactor	= 1.2;
-	G_player->accSpeed	= 16;
-	G_player->baseSpeed	= 8;
-	G_player->tick		= playerTick;
-	ListAdd(&G_ships, G_player);
+	playerAi = (Ai) {NULL, playerTick, NULL};
+	stupidAi = (Ai) {NULL, aiBasicTick, NULL};
 
-	Ship* s = calloc(1, sizeof(Ship));
-	mat4x4_identity(s->rot);
-	//mat4x4_rotate_Y(s->rot, s->rot, M_PI);
-	memcpy(s->pos, (vec3) {1, 1, -50}, sizeof(vec3));
-	s->accTFactor	= 0.4;
-	s->accSpeed	= 16;
-	s->baseSpeed	= 8;
-	s->tick		= aiBasicTick;
-	ListAdd(&G_ships, s);
+	G_player = G_AddShip(NULL, NULL, NULL, &playerAi);
+
+	G_AddShip((vec3) {1, 1, -50}, NULL, NULL, &stupidAi);
 
 	Particle* p = calloc(1, sizeof(Particle));
 	memcpy(p->pos, (vec3) {20, 0, 0}, sizeof(vec3));
@@ -90,8 +81,8 @@ void G_Tick() {
 	for (int i = 0; i < G_ships.size; i++) {
 		Ship* s = ListGet(&G_ships, i);
 
-		if (s->tick)
-			s->tick(s);
+		if (s->ai && s->ai->live)
+			s->ai->live(s);
 	}
 
 	// Applicera hastigheten och accelerationen på alla skepp
@@ -161,6 +152,29 @@ void G_Tick() {
 			for (int j = 0; j < 4; j++) 
 				g->rot[i][j] = interp(f->rot[i][j], g->rot[i][j], tR);
 	}
+}
+
+Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
+	Ship* s = calloc(1, sizeof(Ship));
+
+	if (p) memcpy(s->pos, p, sizeof(vec3));
+
+	if (v) memcpy(s->vel, v, sizeof(vec3));
+
+	mat4x4_identity(s->rot);
+	if (r) memcpy(s->rot, r, sizeof(mat4x4));
+
+	s->accTFactor	= 1.2;
+	s->accSpeed	= 16;
+	s->baseSpeed	= 8;
+
+	if (ai) s->ai = ai;
+
+	ListAdd(&G_ships, s);
+
+	if (ai->spawn) s->ai->spawn(s);
+
+	return s;
 }
 
 void playerTick(Ship* s) {

@@ -13,11 +13,20 @@
 
 #include "def.h"
 
+struct Ship;
+
+// Ett skepps logik
+typedef struct Ai {
+	void (*spawn)(struct Ship*);
+	void (*live)(struct Ship*);
+	void (*die)(struct Ship*);
+} Ai;
+
 typedef struct Ship {
 	vec3 pos, vel;
 	mat4x4 rot;
 
-	vec3 pOffs; // Visuella förskjutningar
+	vec3 pOffs; // Visuella förskjutningar, används för animationer
 	float zOffs;
 
 	// För accelerationsfunktionen
@@ -25,7 +34,7 @@ typedef struct Ship {
 
 	float baseSpeed;
 
-	void (*tick)(struct Ship*);
+	Ai* ai; // Skeppets interna logik
 } Ship;
 
 extern List G_ships;
@@ -71,6 +80,14 @@ extern Camera cam;
 
 void G_InitLevel();
 void G_Tick();
+
+// Create a new ship and add it to G_ships
+// 	vec3 p		Position of the ship or NULL if zeroed
+// 	vec3 v		Speed of the ship or NULL if zeroed
+// 	mat4x4 r	Rotation of the ship or NULL if zeroed
+// 	Ai* ai		The ai of the created ship or NULL
+//
+Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai);
 
 
 #endif // G_MAIN_H
