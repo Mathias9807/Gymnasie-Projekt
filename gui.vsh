@@ -9,6 +9,8 @@ varying vec2 uv;
 
 uniform vec2 pos;
 uniform vec2 size;
+uniform vec2 subPos;
+uniform vec2 subSize;
 
 void main() {
 	uv = uv_in;

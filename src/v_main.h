@@ -27,8 +27,13 @@ extern mat4x4 V_projMat, V_worldMat, V_modelMat;
 
 extern vec2 parallaxShift; // Parallax camera shifting
 
+#define V_FONT_CHAR_WIDTH 8
+#define V_FONT_SIZE 512
+extern int fontTex; // Texture containing the font
+
 void V_Init();
 void V_Tick();
+void V_RenderText(const char* text, vec2 pos, float scale);
 void V_SetCamera(Camera* c);
 void V_SetCameraFocus(Ship* s);
 void V_ApplyCamera();

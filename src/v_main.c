@@ -26,6 +26,7 @@ Model* billboard;
 // Alla partikel texturer
 #define NUM_PART_TEXTURES 8
 int partTextures[NUM_PART_TEXTURES];
+int fontTex;
 
 int tex, schack, abstractBox;
 int crosshair1, crosshair2;
@@ -43,6 +44,8 @@ void LoadResources() {
 	crosshair1 = V_LoadTexture("res/square-crosshair.png");
 	crosshair2 = V_LoadTexture("res/diamond-crosshair.png");
 
+	fontTex = V_LoadTexture("res/ubuntu-mono.png");
+
 	int i = 0;
 	partTextures[i++] = V_LoadTexture("res/Smoke.png");
 	partTextures[i++] = V_LoadTexture("res/Flame.png");
@@ -56,6 +59,8 @@ void V_Init() {
 
 	V_SetShader(guiShader);
 	V_SetParam1i("tex", 0);
+	V_SetParam2f("subPos", 0, 0);
+	V_SetParam2f("subSize", 1, 1);
 	V_SetShader(shader);
 	V_SetParam1i("diffuse_tex", 0);
 
@@ -207,6 +212,21 @@ void V_Tick() {
 
 	// Kolla så att allt gick bra
 	SYS_CheckErrors();
+}
+
+void V_RenderText(const char* text, vec2 pos, float scale) {
+	V_SetParam2f("size", scale, scale);
+	for (int i = 0; text[i]; i++) {
+		char c = text[i];
+
+		V_SetParam2f("pos", pos[0] + i * scale
+				* V_FONT_CHAR_WIDTH / 16, pos[1]);
+		V_SetParam2f("subPos", (c % 32) * 16.0 / V_FONT_SIZE,
+			(c / 32) * 16.0 / V_FONT_SIZE);
+		V_SetParam2f("subSize", 1.0 / 32, 1.0 / 32);
+		V_BindTexture(fontTex, 0);
+		V_RenderModel(unitPlane);
+	}
 }
 
 // Sätt kamerans värden

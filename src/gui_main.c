@@ -52,8 +52,13 @@ void GUI_RenderComp(MenuComp* comp) {
 		V_SetParam2f("pos", 0.1 + parallaxShift[0] * comp->parallax,
 				0.1 - parallaxShift[1] * comp->parallax);
 		V_SetParam2f("size", 0.1, 0.1);
+		V_SetParam2f("subPos", 0, 0);
+		V_SetParam2f("subSize", 1, 1);
 		V_BindTexture(abstractBox, 0);
 		V_RenderModel(unitPlane);
+
+		V_RenderText("Hello Text!", (vec2) {0, 0}, 0.05);
+
 		break;
 	}
 }
