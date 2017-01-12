@@ -15,7 +15,7 @@
 
 // Indexen för varje kontroll i SYS_keys och SYS_var
 enum {
-	IN_LVERT, IN_LHORIZ, IN_RVERT, IN_RHORIZ, IN_ATTACK, IN_BOOST, IN_QUIT, IN_LAST
+	IN_LVERT, IN_LHORIZ, IN_RVERT, IN_RHORIZ, IN_ATTACK, IN_BOOST, IN_ACTION, IN_QUIT, IN_START, IN_LAST
 };
 
 extern bool SYS_keys[IN_LAST];
