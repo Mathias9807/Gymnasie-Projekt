@@ -48,7 +48,7 @@ typedef struct {
 void* ListGet(List* l, int index);
 int ListFind(List* l, void* value);
 int ListSize(List* l);
-void ListAdd(List* l, void* value);
+void* ListAdd(List* l, void* value);
 void ListRemove(List* l, int index);
 void ListBubbleSort(List* l, int (*comparator)(void* a, void* b));
 

@@ -54,7 +54,7 @@ int ListSize(List* l) {
 	return i;
 }
 
-void ListAdd(List* l, void* value) {
+void* ListAdd(List* l, void* value) {
 	ListEntry* cur = l->first;
 	if (cur) {
 		while (cur->next) 
@@ -70,6 +70,8 @@ void ListAdd(List* l, void* value) {
 	}
 	
 	l->size++;
+
+	return value;
 }
 
 void ListRemove(List* l, int index) {
