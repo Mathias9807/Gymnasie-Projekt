@@ -178,7 +178,7 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 }
 
 void playerTick(Ship* s) {
-	if (GUI_focusGrabbed) return;
+	if (GUI_currentMenu && GUI_currentMenu->focusGrabbed) return;
 
 	// Beräkna den nya accelerationen
 	float boost = 0;

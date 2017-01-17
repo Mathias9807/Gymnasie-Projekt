@@ -15,21 +15,53 @@
 #include "v_opengl.h"
 
 
-Menu* GUI_currentMenu = NULL;
-bool GUI_focusGrabbed = false; // Om menyerna tar tangentbordsfokuset
+Menu mainMenu = {0}, inGameMenu = {0};
+Menu* GUI_currentMenu = &mainMenu;
 
 // Modellen som används för att rita ut rektanglar
 extern Model* unitPlane;
 
 extern int abstractBox;
 
-void OpenMainMenu();
+static void openInGameMenu() { GUI_ChangeMenu(&inGameMenu); }
 
 void GUI_Init() {
-	OpenMainMenu();
+	// Skapa huvud menyn
+	{
+		mainMenu.focusGrabbed = true;
+		MenuComp* ply, *ctr, *stp;
+		GUI_CreateLabel(&mainMenu, "Space game",
+				(vec2) {0.5, 0.1}, 0.06, true);
+
+		ply = GUI_CreateLabel(&mainMenu,
+				"Play", (vec2) {0.5, 0.4}, 0.04, true);
+		ctr = GUI_CreateLabel(&mainMenu,
+				"Controls", (vec2) {0.5, 0.5}, 0.04, true);
+		stp = GUI_CreateLabel(&mainMenu,
+				"Quit", (vec2) {0.5, 0.6}, 0.04, true);
+
+		GUI_CompAddAction(ply, openInGameMenu);
+		GUI_CompAddAction(ctr, NULL);
+		GUI_CompAddAction(stp, SYS_Quit);
+
+		GUI_CreateSelector(&mainMenu);
+	}
+
+	// Skapa menyn som visas under gameplay
+	{
+		inGameMenu.focusGrabbed = false;
+	}
 }
 
+// Uppdatera komponenterna
 void GUI_Tick() {
+	ListEntry* le = GUI_currentMenu->comps.first;
+	while (le) {
+		MenuComp* c = le->value;
+		if (c->tick) c->tick(c);
+
+		le = le->next;
+	}
 }
 
 // Rita menyn
@@ -39,42 +71,64 @@ void GUI_Render() {
 	V_SetDepthTesting(false);
 	V_SetShader(guiShader);
 	ListEntry* le = GUI_currentMenu->comps.first;
-	do {
+	while (le) {
 		GUI_RenderComp(le->value);
-	}while (le->next && (le = le->next));
-	V_SetShader(shader);
+
+		le = le->next;
+	}
 }
 
 // Rita en komponent
 void GUI_RenderComp(MenuComp* comp) {
+	V_SetParam2f("pos", comp->pos[0] + parallaxShift[0] * comp->parallax,
+			comp->pos[1] - parallaxShift[1] * comp->parallax);
+	V_SetParam2f("size", comp->size[0], comp->size[1]);
+
 	switch (comp->type) {
-	case Box:
-		V_SetParam2f("pos", 0.1 + parallaxShift[0] * comp->parallax,
-				0.1 - parallaxShift[1] * comp->parallax);
-		V_SetParam2f("size", 0.1, 0.1);
+	case Label: {
+		float scale = comp->data.label.scale;
+		vec2 textSize = {
+			(float) V_FONT_CHAR_WIDTH * strlen(comp->data.label.text)
+				/ V_FONT_CHAR_SIZE * scale, scale
+		};
+
+		V_RenderText(comp->data.label.text, (vec2) {
+				comp->pos[0] - comp->data.label.centered
+				* textSize[0] / 2,
+				comp->pos[1] - comp->data.label.centered
+				* textSize[1] / 2}, scale);
+
+		break;
+	}case Selector: {
+		float scale = 0.05;
+		MenuComp* t = comp->data.selector.selected;
+		if (!t) break;
+
+		V_RenderText("[", (vec2) {
+				t->pos[0] - t->size[0] / 2 -
+				scale * V_FONT_CHAR_WIDTH / V_FONT_CHAR_SIZE,
+				t->pos[1] - scale / 2}, scale);
+		V_RenderText("]", (vec2) {
+				t->pos[0] + t->size[0] / 2 + scale * 4.0 /
+				V_FONT_CHAR_SIZE, t->pos[1] - scale / 2}, scale);
+
+		break;
+	}case Box:
 		V_SetParam2f("subPos", 0, 0);
 		V_SetParam2f("subSize", 1, 1);
 		V_BindTexture(abstractBox, 0);
 		V_RenderModel(unitPlane);
 
-		V_RenderText("Hello Text!", (vec2) {0, 0}, 0.05);
-
 		break;
 	}
 }
 
-void OpenMainMenu() {
-	Menu* m		= calloc(1, sizeof(Menu));
-	MenuComp* c	= calloc(1, sizeof(MenuComp));
-	c->type		= Box;
-	c->parallax	= 1.0;
-	ListAdd(&m->comps, c);
-	MenuComp* c2	= calloc(1, sizeof(MenuComp));
-	c2->type	= Box;
-	c2->parallax	= 0.5;
-	ListAdd(&m->comps, c);
-
+void GUI_ChangeMenu(Menu* m) {
 	GUI_currentMenu = m;
-	GUI_focusGrabbed = true;
+}
+
+void GUI_CompAddAction(MenuComp* c, void (*action)()) {
+	c->selectable = true;
+	c->action = action;
 }
 

@@ -16,6 +16,7 @@ Källkods filer:
 				kontrollerna.
 
 	GUI_main:	GUI hantering
+	GUI_components:	Funktioner till GUI komponenter
 
 SYS_main.c:main
 Programmet startar

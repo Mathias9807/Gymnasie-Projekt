@@ -11,6 +11,7 @@
 #include "v_opengl.h"
 #include "v_main.h"
 #include "g_main.h"
+#include "gui_main.h"
 
 
 // Kameran som ritar scenen
@@ -88,6 +89,8 @@ int particleComparator(void* a, void* b) {
 }
 
 void V_Tick() {
+	V_SetShader(shader);
+
 	// Uppdatera parallax vektorn
 	if (camera && camera->focus) {
 		Ship* focus = camera->focus;
@@ -189,41 +192,45 @@ void V_Tick() {
 	V_PopState();
 	V_UseTextures(true);
 
-	// Rita det närmre siktet
-	mat4x4_translate(V_modelMat,
-		G_player->pos[0], G_player->pos[1], G_player->pos[2]);
-	mat4x4_mul(V_modelMat, V_modelMat, G_player->rot);
-	mat4x4_translate_in_place(V_modelMat, 0, 0, -20);
-	mat4x4_rotate_X(V_modelMat, V_modelMat, M_PI / 2);
+	// Rita siktena om spelaren har kontroll över skeppet
+	if (GUI_currentMenu && !GUI_currentMenu->focusGrabbed) {
+		// Rita det närmre siktet
+		mat4x4_translate(V_modelMat,
+			G_player->pos[0], G_player->pos[1], G_player->pos[2]);
+		mat4x4_mul(V_modelMat, V_modelMat, G_player->rot);
+		mat4x4_translate_in_place(V_modelMat, 0, 0, -20);
+		mat4x4_rotate_X(V_modelMat, V_modelMat, M_PI / 2);
 
-	V_BindTexture(crosshair1, 0);
-	V_RenderModel(unitPlane);
+		V_BindTexture(crosshair1, 0);
+		V_RenderModel(unitPlane);
 
-	// Rita siktet längre bort
-	mat4x4_translate(V_modelMat,
-		G_player->pos[0], G_player->pos[1], G_player->pos[2]);
-	mat4x4_mul(V_modelMat, V_modelMat, G_player->rot);
-	mat4x4_translate_in_place(V_modelMat, 0, 0, -60);
-	mat4x4_rotate_X(V_modelMat, V_modelMat, M_PI / 2);
-	mat4x4_scale_aniso(V_modelMat, V_modelMat, 2, 2, 2);
+		// Rita siktet längre bort
+		mat4x4_translate(V_modelMat,
+			G_player->pos[0], G_player->pos[1], G_player->pos[2]);
+		mat4x4_mul(V_modelMat, V_modelMat, G_player->rot);
+		mat4x4_translate_in_place(V_modelMat, 0, 0, -60);
+		mat4x4_rotate_X(V_modelMat, V_modelMat, M_PI / 2);
+		mat4x4_scale_aniso(V_modelMat, V_modelMat, 2, 2, 2);
 
-	V_BindTexture(crosshair2, 0);
-	V_RenderModel(unitPlane);
+		V_BindTexture(crosshair2, 0);
+		V_RenderModel(unitPlane);
+	}
 
 	// Kolla så att allt gick bra
 	SYS_CheckErrors();
 }
 
 void V_RenderText(const char* text, vec2 pos, float scale) {
+	if (curShader != guiShader) V_SetShader(guiShader);
+
 	V_SetParam2f("size", scale, scale);
 	for (int i = 0; text[i]; i++) {
 		char c = text[i];
 
 		V_SetParam2f("pos", pos[0] + i * scale
-				* V_FONT_CHAR_WIDTH / 16, pos[1]);
-		V_SetParam2f("subPos", (c % 32) * 16.0 / V_FONT_SIZE,
-			(c / 32) * 16.0 / V_FONT_SIZE);
-		V_SetParam2f("subSize", 1.0 / 32, 1.0 / 32);
+				* V_FONT_CHAR_WIDTH / V_FONT_CHAR_SIZE, pos[1]);
+		V_SetParam2f("subPos", (c % 32) / 32.0, (c / 32) / 32.0);
+		V_SetParam2f("subSize", 0.99 / 32, 1.0 / 32);
 		V_BindTexture(fontTex, 0);
 		V_RenderModel(unitPlane);
 	}
