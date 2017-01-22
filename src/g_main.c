@@ -28,6 +28,7 @@ Camera cam = {
 };
 
 void RotateShip(Ship* s, float x, float y, float z);
+void ShipExhaust(Ship* s, double* lastExhaust);
 void playerTick(Ship* s);
 void aiBasicTick(Ship* s);
 
@@ -104,6 +105,8 @@ void G_Tick() {
 	// Applicera hastigheten till alla partiklar
 	for (int i = 0; i < G_particles.size; i++) {
 		Particle* p = ListGet(&G_particles, i);
+
+		if (p->deltaScale != 0.0) p->scale *= pow(p->deltaScale, SYS_dSec);
 		
 		if (p->spawnTime && SYS_GetTime() - p->spawnTime > p->lifeTime) {
 			ListRemove(&G_particles, i);
@@ -177,7 +180,23 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	return s;
 }
 
+Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life) {
+	Particle* p = calloc(1, sizeof(Particle));
+
+	p->texture = tex;
+	if (pos) memcpy(p->pos, pos, sizeof(vec3));
+	if (vel) memcpy(p->vel, vel, sizeof(vec3));
+	p->scale = scale;
+	p->lifeTime = life;
+	p->spawnTime = SYS_GetTime();
+
+	return ListAdd(&G_particles, p);
+}
+
 void playerTick(Ship* s) {
+	static double lastExhaust = 0;
+	ShipExhaust(s, &lastExhaust);
+
 	if (GUI_currentMenu && GUI_currentMenu->focusGrabbed) return;
 
 	// Beräkna den nya accelerationen
@@ -214,6 +233,9 @@ void playerTick(Ship* s) {
 }
 
 void aiBasicTick(Ship* s) {
+	static double lastExhaust = 0;
+	ShipExhaust(s, &lastExhaust);
+
 	RotateShip(s, 0, 0, 1 * SYS_dSec);
 }
 
@@ -232,5 +254,20 @@ void RotateShip(Ship* s, float x, float y, float z) {
 	mat4x4_rotate(rot, rot, zAxis[0], zAxis[1], zAxis[2], 
 		-z);
 	mat4x4_mul(s->rot, rot, s->rot);
+}
+
+// Skapar eld partiklar bakom skepp (lastExhaust: när förra partikeln skapades)
+void ShipExhaust(Ship* s, double* lastExhaust) {
+	if (*lastExhaust == 0) *lastExhaust = SYS_GetTime();
+	double now = SYS_GetTime();
+	const int freq = 30;
+	while (now - *lastExhaust > 1.0 / freq) {
+		vec4 pos;
+		mat4x4_mul_vec4(pos, s->rot, (vec4) {0, 0, 1, 1});
+		vec4_add(pos, pos, s->pos);
+		Particle* p = G_AddParticle(1, pos, NULL, 0.4, 0.2);
+		p->deltaScale = 0.004;
+		*lastExhaust += 1.0 / freq;
+	}
 }
 

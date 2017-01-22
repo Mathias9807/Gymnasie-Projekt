@@ -44,7 +44,7 @@ typedef struct {
 	int texture;
 	
 	vec3 pos, vel;
-	float scale;
+	float scale, deltaScale;
 	
 	double spawnTime, lifeTime;
 } Particle;
@@ -88,6 +88,15 @@ void G_Tick();
 // 	Ai* ai		The ai of the created ship or NULL
 //
 Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai);
+
+// Create a new particle
+// 	int tex		Texture to use in the particle texture array
+// 	vec3 pos	Position of the particle or NULL if zeroed
+// 	vec3 vel	Speed of the particle or NULL if zeroed
+// 	float scale	Size of the particle
+// 	float life	How long the particle should live for
+//
+Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life);
 
 
 #endif // G_MAIN_H
