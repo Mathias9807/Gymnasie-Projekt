@@ -192,6 +192,9 @@ int main(int argc, char* argv[]) {
 	SYS_argc = argc;
 	SYS_argv = argv;
 
+	// Ge RNG generatorn ett seed
+	srand(0);
+
 	if (SYS_HasParam("--version") || SYS_HasParam("-v")) {
 		printf("Version: %s\n", VERSION);
 

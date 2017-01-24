@@ -28,7 +28,7 @@ Camera cam = {
 };
 
 void RotateShip(Ship* s, float x, float y, float z);
-void ShipExhaust(Ship* s, double* lastExhaust);
+void ShipExhaust(Ship* s, vec3 offs, double* lastExhaust);
 void playerTick(Ship* s);
 void aiBasicTick(Ship* s);
 
@@ -194,8 +194,9 @@ Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life) {
 }
 
 void playerTick(Ship* s) {
-	static double lastExhaust = 0;
-	ShipExhaust(s, &lastExhaust);
+	static double ex0 = 0, ex1;
+	ShipExhaust(s, (vec3) {-0.18, 0, 1}, &ex0);
+	ShipExhaust(s, (vec3) { 0.18, 0, 1}, &ex1);
 
 	if (GUI_currentMenu && GUI_currentMenu->focusGrabbed) return;
 
@@ -233,8 +234,9 @@ void playerTick(Ship* s) {
 }
 
 void aiBasicTick(Ship* s) {
-	static double lastExhaust = 0;
-	ShipExhaust(s, &lastExhaust);
+	static double ex0 = 0, ex1;
+	ShipExhaust(s, (vec3) {-0.18, 0, 1}, &ex0);
+	ShipExhaust(s, (vec3) { 0.18, 0, 1}, &ex1);
 
 	RotateShip(s, 0, 0, 1 * SYS_dSec);
 }
@@ -257,16 +259,22 @@ void RotateShip(Ship* s, float x, float y, float z) {
 }
 
 // Skapar eld partiklar bakom skepp (lastExhaust: när förra partikeln skapades)
-void ShipExhaust(Ship* s, double* lastExhaust) {
+void ShipExhaust(Ship* s, vec3 offs, double* lastExhaust) {
 	if (*lastExhaust == 0) *lastExhaust = SYS_GetTime();
 	double now = SYS_GetTime();
 	const int freq = 30;
 	while (now - *lastExhaust > 1.0 / freq) {
-		vec4 pos;
-		mat4x4_mul_vec4(pos, s->rot, (vec4) {0, 0, 1, 1});
+		vec4 pos = {0, 0, 0, 1};
+		mat4x4_mul_vec4(pos, s->rot, offs);
 		vec4_add(pos, pos, s->pos);
-		Particle* p = G_AddParticle(1, pos, NULL, 0.4, 0.2);
-		p->deltaScale = 0.004;
+		{
+			vec4_add(pos, pos, (vec4) {
+				(rand() % 100 - 50) / 2000.0,
+				(rand() % 100 - 50) / 2000.0,
+				(rand() % 100 - 50) / 2000.0, 0});
+		}
+		Particle* p = G_AddParticle(1, pos, NULL, 0.3, 0.1);
+		p->deltaScale = 0.0001;
 		*lastExhaust += 1.0 / freq;
 	}
 }
