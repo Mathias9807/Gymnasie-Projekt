@@ -8,6 +8,7 @@
  */
 
 #include "g_main.h"
+#include "g_ai.h"
 #include "gui_main.h"
 #include "sys_input.h"
 #include "sys_main.h"
@@ -27,46 +28,22 @@ Camera cam = {
 	.fov = 45, .near = 0.1, .far = 300
 };
 
-void RotateShip(Ship* s, float x, float y, float z);
-void ShipExhaust(Ship* s, vec3 offs, double* lastExhaust);
-void playerTick(Ship* s);
-void aiBasicTick(Ship* s);
-
 // Ökningen i hastighet när ett skepp boostar
 double acceleration(double t) {
 	return 3 * t * t - 2 * t * t * t;
 }
 
 void G_InitLevel() {
-	playerAi = (Ai) {NULL, playerTick, NULL};
-	stupidAi = (Ai) {NULL, aiBasicTick, NULL};
+	playerAi = (Ai) {NULL, G_PlayerTick, G_Die, G_ShipHit, G_OnDying};
+	stupidAi = (Ai) {NULL, G_AiBasicTick, G_Die, G_ShipHit, G_OnDying};
 
 	G_player = G_AddShip(NULL, NULL, NULL, &playerAi);
 
-	G_AddShip((vec3) {1, 1, -50}, NULL, NULL, &stupidAi);
+	G_AddShip((vec3) {1, 9, -50}, NULL, NULL, &stupidAi);
+	G_AddShip((vec3) {9, 5, -50}, NULL, NULL, &stupidAi);
+	G_AddShip((vec3) {-5, 9, -60}, NULL, NULL, &stupidAi);
 
-	Particle* p = calloc(1, sizeof(Particle));
-	memcpy(p->pos, (vec3) {20, 0, 0}, sizeof(vec3));
-	p->scale = 1;
-	ListAdd(&G_particles, p);
-	
-	p = calloc(1, sizeof(Particle));
-	memcpy(p->pos, (vec3) {20, 5, 10}, sizeof(vec3));
-	p->texture = 2;
-	p->scale = 5;
-	ListAdd(&G_particles, p);
-	
-	p = calloc(1, sizeof(Particle));
-	memcpy(p->pos, (vec3) {25, 5, 10}, sizeof(vec3));
-	p->texture = 2;
-	p->scale = 5;
-	ListAdd(&G_particles, p);
-	
-	p = calloc(1, sizeof(Particle));
-	memcpy(p->pos, (vec3) {22.5f, 5, 15}, sizeof(vec3));
-	p->texture = 2;
-	p->scale = 5;
-	ListAdd(&G_particles, p);
+	G_AddParticle(0, (vec3) {20, 0, 0}, NULL, 1, 0);
 	
 	V_SetCamera(&cam);
 	V_SetCameraFocus(G_player);
@@ -118,16 +95,39 @@ void G_Tick() {
 			p->pos[j] += p->vel[j] * SYS_dSec;
 	}
 
-	// Ta bort gamla skott
+	// Applicera hastigheten till alla skott
 	for (int i = 0; i < G_bullets.size; i++) {
 		Bullet* b = ListGet(&G_bullets, i);
+
+		if (b->deltaScale != 0.0) b->scale *= pow(b->deltaScale, SYS_dSec);
 		
+		// Ta bort gamla skott
 		if (b->spawnTime && SYS_GetTime() - b->spawnTime > b->lifeTime) {
-			ListRemove(&G_particles, ListFind(&G_particles, b->p));
 			ListRemove(&G_bullets, i);
-			
 			i--;
 			continue;
+		}
+		
+		for (int j = 0; j < 3; j++)
+			b->pos[j] += b->vel[j] * SYS_dSec;
+
+		// Kolla om något skepp har blivit träffat
+		for (int j = 0; j < G_ships.size; j++) {
+			Ship* s = ListGet(&G_ships, j);
+
+			// Skott kan inte träffa skepp de sköts från
+			if (s == b->s) continue;
+
+			// Kolla först "manhattan" avståndet och sedan det verkliga
+			vec3 d = {0};
+			vec3_sub(d, s->pos, b->pos);
+			float r = b->scale / 2 + 1;
+			if (d[0]*d[0] < r
+					&& d[1]*d[1] < r
+					&& d[2]*d[2] < r) {
+				if (s->ai && s->ai->onHit)
+					s->ai->onHit(s, b);
+			}
 		}
 	}
 
@@ -163,6 +163,7 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	if (p) memcpy(s->pos, p, sizeof(vec3));
 
 	if (v) memcpy(s->vel, v, sizeof(vec3));
+	s->size = 1;
 
 	mat4x4_identity(s->rot);
 	if (r) memcpy(s->rot, r, sizeof(mat4x4));
@@ -170,6 +171,7 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	s->accTFactor	= 1.2;
 	s->accSpeed	= 16;
 	s->baseSpeed	= 8;
+	s->health = 1;
 
 	if (ai) s->ai = ai;
 
@@ -178,6 +180,10 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	if (ai->spawn) s->ai->spawn(s);
 
 	return s;
+}
+
+void G_DeleteShip(Ship* s) {
+	ListRemove(&G_ships, ListFind(&G_ships, s));
 }
 
 Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life) {
@@ -193,56 +199,22 @@ Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life) {
 	return ListAdd(&G_particles, p);
 }
 
-void playerTick(Ship* s) {
-	static double ex0 = 0, ex1;
-	ShipExhaust(s, (vec3) {-0.18, 0, 1}, &ex0);
-	ShipExhaust(s, (vec3) { 0.18, 0, 1}, &ex1);
+Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale, double life) {
+	Bullet* b = calloc(1, sizeof(Bullet));
 
-	if (GUI_currentMenu && GUI_currentMenu->focusGrabbed) return;
+	b->s = s;
+	b->texture = tex;
+	if (pos) memcpy(b->pos, pos, sizeof(vec3));
+	if (vel) memcpy(b->vel, vel, sizeof(vec3));
+	b->scale = scale;
+	b->lifeTime = life;
+	b->spawnTime = SYS_GetTime();
 
-	// Beräkna den nya accelerationen
-	float boost = 0;
-	boost += SYS_dSec * (SYS_var[IN_BOOST] * 2 - 1);
-	G_player->accT += boost * G_player->accTFactor;
-	G_player->accT = min(G_player->accT, 1);
-	G_player->accT = max(G_player->accT, 0);
-
-	// Hämta rotationen relativt till skeppets nuvarande orientation
-	double vert = 0, horiz = 0, tilt = 0;
-	vert += SYS_var[IN_RVERT] - SYS_var[IN_LVERT];
-	horiz += SYS_var[IN_RHORIZ];
-	tilt += SYS_var[IN_LHORIZ];
-	
-	RotateShip(G_player, vert * SYS_dSec, horiz * SYS_dSec, tilt * SYS_dSec);
-
-	static bool atkHeld = false;
-	if (SYS_keys[IN_ATTACK] && !atkHeld) {
-		Bullet* b = calloc(1, sizeof(Bullet));
-		b->p = calloc(1, sizeof(Particle));
-		b->p->texture = 2;
-		b->p->scale = 0.3;
-		b->lifeTime = 1;
-		b->spawnTime = SYS_GetTime();
-		memcpy(b->p->pos, G_player->pos, sizeof(vec3));
-		vec4 v = {0, 0, -50, 0}, r;
-		mat4x4_mul_vec4(r, G_player->rot, v);
-		memcpy(b->p->vel, r, sizeof(vec3));
-		ListAdd(&G_bullets, b);
-		ListAdd(&G_particles, b->p);
-	}
-	atkHeld = SYS_keys[IN_ATTACK];
-}
-
-void aiBasicTick(Ship* s) {
-	static double ex0 = 0, ex1;
-	ShipExhaust(s, (vec3) {-0.18, 0, 1}, &ex0);
-	ShipExhaust(s, (vec3) { 0.18, 0, 1}, &ex1);
-
-	RotateShip(s, 0, 0, 1 * SYS_dSec);
+	return ListAdd(&G_bullets, b);
 }
 
 // Roterar ett skepp (x = pitch, y = yaw, z = roll)
-void RotateShip(Ship* s, float x, float y, float z) {
+void G_RotateShip(Ship* s, float x, float y, float z) {
 	vec4 zAxis, yAxis, xAxis;
 	mat4x4 rot;
 	mat4x4_identity(rot);
@@ -259,7 +231,7 @@ void RotateShip(Ship* s, float x, float y, float z) {
 }
 
 // Skapar eld partiklar bakom skepp (lastExhaust: när förra partikeln skapades)
-void ShipExhaust(Ship* s, vec3 offs, double* lastExhaust) {
+void G_ShipExhaust(Ship* s, vec3 offs, double* lastExhaust) {
 	if (*lastExhaust == 0) *lastExhaust = SYS_GetTime();
 	double now = SYS_GetTime();
 	const int freq = 30;

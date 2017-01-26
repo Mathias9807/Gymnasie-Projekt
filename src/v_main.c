@@ -170,7 +170,7 @@ void V_Tick() {
 	// Sortera partiklarna efter avstånd
 	ListBubbleSort(&G_particles, particleComparator);
 
-	// Rita partiklarna
+	// Rita partiklarna och skotten
 	V_UseTextures(false);
 	V_IsParticle(true);
 	V_SetDepthWriting(false);
@@ -181,6 +181,15 @@ void V_Tick() {
 
 		mat4x4_translate(V_modelMat, p->pos[0], p->pos[1], p->pos[2]);
 		mat4x4_scale(V_modelMat, V_modelMat, 1 / p->scale);
+
+		V_RenderModel(billboard);
+	}
+	for (int i = 0; i < G_bullets.size; i++) {
+		Bullet* b = ListGet(&G_bullets, i);
+		V_BindTexture(partTextures[b->texture], 0);
+
+		mat4x4_translate(V_modelMat, b->pos[0], b->pos[1], b->pos[2]);
+		mat4x4_scale(V_modelMat, V_modelMat, 1 / b->scale);
 
 		V_RenderModel(billboard);
 	}

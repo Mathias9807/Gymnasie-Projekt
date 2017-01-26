@@ -10,6 +10,8 @@ Källkods filer:
 	G_main:		Styr själva spelet och fysiken när saker rör
 				sig. 
 
+	G_ai:		Innehåller alla ai rutiner. 
+
 	SYS_audio:	Laddar och spelar upp ljud. 
 
 	SYS_input:	Läser tangentbordet och ger en abstraktion av
