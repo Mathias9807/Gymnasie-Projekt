@@ -125,6 +125,10 @@ void G_Tick() {
 			if (d[0]*d[0] < r
 					&& d[1]*d[1] < r
 					&& d[2]*d[2] < r) {
+				// Kolla sfäriskt avstånd
+				if (vec3_mul_inner(d, d) > r * r)
+					continue;
+
 				if (s->ai && s->ai->onHit)
 					s->ai->onHit(s, b);
 			}
