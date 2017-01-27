@@ -203,7 +203,7 @@ Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life) {
 	return ListAdd(&G_particles, p);
 }
 
-Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale, double life) {
+Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale) {
 	Bullet* b = calloc(1, sizeof(Bullet));
 
 	b->s = s;
@@ -211,7 +211,7 @@ Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale, double li
 	if (pos) memcpy(b->pos, pos, sizeof(vec3));
 	if (vel) memcpy(b->vel, vel, sizeof(vec3));
 	b->scale = scale;
-	b->lifeTime = life;
+	b->lifeTime = 10;
 	b->spawnTime = SYS_GetTime();
 
 	return ListAdd(&G_bullets, b);

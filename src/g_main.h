@@ -125,7 +125,7 @@ Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life);
 // 	float scale	Size of the bullet
 // 	float life	How long the bullet should live for
 //
-Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale, double life);
+Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale);
 
 
 #endif // G_MAIN_H
