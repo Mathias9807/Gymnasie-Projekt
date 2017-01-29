@@ -177,16 +177,19 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	s->baseSpeed	= 8;
 	s->health = 1;
 
-	if (ai) s->ai = ai;
-
 	ListAdd(&G_ships, s);
 
+	if (ai) s->ai = ai;
 	if (ai->spawn) s->ai->spawn(s);
+
+	s->source = S_CreateSource(s);
+	S_PlayClip(&S_rockets, s->source, true);
 
 	return s;
 }
 
 void G_DeleteShip(Ship* s) {
+	S_DeleteSource(s->source);
 	ListRemove(&G_ships, ListFind(&G_ships, s));
 }
 
@@ -215,6 +218,10 @@ Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale) {
 	b->spawnTime = SYS_GetTime();
 
 	return ListAdd(&G_bullets, b);
+}
+
+void G_DeleteBullet(Bullet* b) {
+	ListRemove(&G_bullets, ListFind(&G_bullets, b));
 }
 
 // Roterar ett skepp (x = pitch, y = yaw, z = roll)

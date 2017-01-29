@@ -13,14 +13,28 @@
 
 #include "def.h"
 #include "sys_main.h"
-#include "g_main.h"
 
 #define S_GLOBAL_VOLUME 50
 
-struct _Clip;
-typedef struct _Clip Clip;
+struct Clip;
+typedef struct Clip Clip;
+struct AudioSource;
+typedef struct AudioSource AudioSource;
 
-typedef struct {
+#include "g_main.h"
+
+struct Clip {
+	int bitsPerSample;
+	int sampleFreq;
+	int channels;
+
+	long long size;
+	char* data;
+
+	unsigned bufferID;
+};
+
+struct AudioSource {
 	unsigned sourceID;
 
 	Ship* s;
@@ -28,13 +42,17 @@ typedef struct {
 	Camera* c;
 
 	vec3 pos, vel;
-} AudioSource;
+};
 extern List S_sources;
+
+extern Clip S_rockets;
 
 void S_Init();
 void S_Tick();
 void S_Quit();
 
+AudioSource* S_CreateSource(Ship* s);
+void S_DeleteSource(AudioSource* source);
 void S_PlayClip(Clip* c, AudioSource* source, bool repeating);
 Clip S_LoadWav(const char* link);
 

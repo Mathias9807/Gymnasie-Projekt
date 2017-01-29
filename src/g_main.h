@@ -17,6 +17,10 @@ struct Ship;
 typedef struct Ship Ship;
 struct Bullet;
 typedef struct Bullet Bullet;
+struct Camera;
+typedef struct Camera Camera;
+
+#include "s_main.h"
 
 // Ett skepps logik
 typedef struct Ai {
@@ -47,6 +51,8 @@ struct Ship {
 	double deadTime; // Håller tiden då skeppet fick health == 0
 	double flameTimer; // Används för att skjuta ut eld at death
 	Ai* ai; // Skeppets interna logik
+
+	AudioSource* source; // Ljudkällan som ljud spelas från
 };
 
 extern List G_ships;
@@ -77,7 +83,7 @@ extern List G_bullets;
 #undef near
 #undef far
 
-typedef struct {
+struct Camera {
 	// Absoluta koordinater
 	vec3 pos;
 	vec3 rot;
@@ -91,7 +97,7 @@ typedef struct {
 	vec2 rOffs;
 
 	double fov, near, far;
-} Camera;
+};
 extern Camera cam;
 
 void G_InitLevel();
@@ -116,6 +122,7 @@ void G_ShipExhaust(Ship* s, vec3 offs, double* lastExhaust);
 // 	float life	How long the particle should live for
 //
 Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life);
+void G_DeleteBullet(Bullet* b);
 
 // Create a new bullet
 // 	Ship* s		The ship that fired the bullet

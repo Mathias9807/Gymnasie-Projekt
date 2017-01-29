@@ -14,21 +14,10 @@
 #include <alc.h>
 
 
-struct _Clip {
-	int bitsPerSample;
-	int sampleFreq;
-	int channels;
-
-	long long size;
-	char* data;
-
-	ALuint bufferID;
-};
 List S_sources;
 
 ALCdevice* device;
-
-Clip rockets;
+Clip S_rockets;
 
 uint16_t getInt16(unsigned char* data);
 uint32_t getInt32(unsigned char* data);
@@ -46,13 +35,7 @@ void S_Init() {
 	}
 	alcMakeContextCurrent(context);
 	
-	rockets = S_LoadWav("res/Rockets.wav");
-
-	ListAdd(&S_sources, S_CreateSource());
-
-	AudioSource* shipSource = S_CreateSource();
-	shipSource->s = ListGet(&G_ships, 1);
-	ListAdd(&S_sources, shipSource);
+	S_rockets = S_LoadWav("res/Rockets.wav");
 }
 
 void S_Tick() {
@@ -95,17 +78,11 @@ void S_Tick() {
 		alSourcefv(s->sourceID, AL_POSITION, p);
 		alSourcefv(s->sourceID, AL_VELOCITY, v);
 	}
-
-	static bool ayy = true;
-	if (ayy) {
-		ayy = false;
-
-		S_PlayClip(&rockets, ListGet(&S_sources, 1), true);
-	}
 }
 
-AudioSource* S_CreateSource() {
+AudioSource* S_CreateSource(Ship* ship) {
 	AudioSource* s = calloc(1, sizeof(AudioSource));
+	s->s = ship;
 
 	alGenSources(1, &s->sourceID);
 	alSourcef(s->sourceID, AL_PITCH, 1);
@@ -113,11 +90,19 @@ AudioSource* S_CreateSource() {
 	alSource3f(s->sourceID, AL_POSITION, 0, 0, 0);
 	alSource3f(s->sourceID, AL_VELOCITY, 0, 0, 0);
 
+	ListAdd(&S_sources, s);
+
 	return s;
 }
 
+void S_DeleteSource(AudioSource* source) {
+	ListRemove(&S_sources, ListFind(&S_sources, source));
+	alDeleteSources(1, &source->sourceID);
+	free(source);
+}
+
 void S_PlayClip(Clip* c, AudioSource* source, bool repeating) {
-	alSourcei(source->sourceID, AL_BUFFER, rockets.bufferID);
+	alSourcei(source->sourceID, AL_BUFFER, c->bufferID);
 	alSourcei(source->sourceID, AL_LOOPING, repeating ? AL_TRUE : AL_FALSE);
 	alSourcePlay(source->sourceID);
 }

@@ -203,13 +203,13 @@ int main(int argc, char* argv[]) {
 
 	V_Init();
 
+	S_Init();
+
 	SYS_InitInput();
 	
 	G_InitLevel();
 
 	GUI_Init();
-
-	S_Init();
 
 	double now = SDL_GetTicks() / 1000.0;
 	double last = now;
