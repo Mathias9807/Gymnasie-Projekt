@@ -32,6 +32,7 @@ typedef struct Ai {
 	void (*onDying)(struct Ship*);
 } Ai;
 
+#define G_SHIP_INVULN_TIME 0.25
 #define G_SHIP_DYING_TIME 1.0
 struct Ship {
 	vec3 pos, vel;
@@ -46,7 +47,10 @@ struct Ship {
 
 	float baseSpeed;
 
-	int health; // Skeppets HP
+	int health, maxHealth; // Skeppets HP
+	vec3 shieldHit; // Koordinaten rel till skeppet där det träffades senast
+	double shieldTime; // Tiden då den träffades senast
+
 	double ex0, ex1; // Timers för skeppets "exhaust"
 	double deadTime; // Håller tiden då skeppet fick health == 0
 	double flameTimer; // Används för att skjuta ut eld at death

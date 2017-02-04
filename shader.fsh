@@ -9,6 +9,7 @@ varying vec2 uv;
 
 uniform float textures;
 uniform sampler2D diffuse_tex; 
+uniform float overrideAlpha;
 uniform mat4 norm_mat;
 
 void main() {

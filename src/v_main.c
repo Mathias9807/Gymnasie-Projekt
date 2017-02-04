@@ -19,7 +19,7 @@ Camera* camera;
 
 vec2 parallaxShift;
 
-Model* ship, * cube;
+Model* ship, * cube, * shield;
 Model* plane;
 Model* unitPlane;
 Model* billboard;
@@ -29,18 +29,20 @@ Model* billboard;
 int partTextures[NUM_PART_TEXTURES];
 int fontTex;
 
-int tex, schack, abstractBox;
+int tex, schack, plasma, abstractBox;
 int crosshair1, crosshair2;
 
 void LoadResources() {
 	ship = V_LoadModel("res/Ship/Ship.dae");
 	cube = V_LoadModel("res/cube.dae");
+	shield = V_LoadModel("res/Shield.dae");
 	plane = V_LoadModel("res/Plane.dae");
 	unitPlane = V_LoadModel("res/unit-plane.dae");
 	billboard = V_LoadModel("res/billboard.dae");
 
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
 	schack = V_LoadTexture("res/Schack.png");
+	plasma = V_LoadTexture("res/Plasma.png");
 	abstractBox = V_LoadTexture("res/Abstract Box.png");
 	crosshair1 = V_LoadTexture("res/square-crosshair.png");
 	crosshair2 = V_LoadTexture("res/diamond-crosshair.png");
@@ -62,8 +64,11 @@ void V_Init() {
 	V_SetParam1i("tex", 0);
 	V_SetParam2f("subPos", 0, 0);
 	V_SetParam2f("subSize", 1, 1);
+	V_SetShader(shieldShader);
+	V_SetParam1i("diffuse_tex", 0);
 	V_SetShader(shader);
 	V_SetParam1i("diffuse_tex", 0);
+	V_SetParam1f("overrideAlpha", -1);
 
 	V_SetDepthTesting(true);
 
@@ -166,6 +171,36 @@ void V_Tick() {
 
 		V_RenderModel(ship);
 	}
+
+	// Rita sköldarna
+	V_BindTexture(plasma, 0);
+	V_SetDepthWriting(false);
+	V_SetFaceCulling(true);
+	V_UseTextures(true);
+	V_SetShader(shieldShader);
+	V_SetParam3f("ship", G_player->pos[0], G_player->pos[1], G_player->pos[2]);
+	double curTime = SYS_GetTime();
+	for (int i = 0; i < G_ships.size; i++) {
+		Ship* s = ListGet(&G_ships, i);
+
+		V_SetParam1f("alpha", 0.1 + 0.2 * s->health / s->maxHealth);
+		V_SetParam3f("hlCenter", s->shieldHit[0],
+				s->shieldHit[1],
+				s->shieldHit[2]);
+		V_SetParam1f("hlTime", curTime - s->shieldTime );
+		V_SetParam1f("health", s->health);
+
+		mat4x4_translate(V_modelMat, s->pos[0], s->pos[1], s->pos[2]);
+		mat4x4_mul(V_modelMat, V_modelMat, s->rot);
+		mat4x4_translate_in_place(V_modelMat,
+			s->pOffs[0], s->pOffs[1], s->pOffs[2]);
+		mat4x4_rotate_Z(V_modelMat, V_modelMat, s->zOffs);
+
+		V_RenderModel(shield);
+	}
+	V_SetFaceCulling(false);
+	V_SetDepthWriting(true);
+	V_SetShader(shader);
 	
 	// Sortera partiklarna efter avstånd
 	ListBubbleSort(&G_particles, particleComparator);

@@ -121,14 +121,10 @@ void G_Tick() {
 			// Kolla först "manhattan" avståndet och sedan det verkliga
 			vec3 d = {0};
 			vec3_sub(d, s->pos, b->pos);
-			float r = b->scale / 2 + 1;
-			if (d[0]*d[0] < r
-					&& d[1]*d[1] < r
-					&& d[2]*d[2] < r) {
-				// Kolla sfäriskt avstånd
-				if (vec3_mul_inner(d, d) > r * r)
-					continue;
-
+			float r2 = (b->scale + s->size) * (b->scale + s->size);
+			if (d[0]*d[0] 
+					+ d[1]*d[1] 
+					+ d[2]*d[2] < r2) {
 				if (s->ai && s->ai->onHit)
 					s->ai->onHit(s, b);
 			}
@@ -167,7 +163,7 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	if (p) memcpy(s->pos, p, sizeof(vec3));
 
 	if (v) memcpy(s->vel, v, sizeof(vec3));
-	s->size = 1;
+	s->size = 1.44;
 
 	mat4x4_identity(s->rot);
 	if (r) memcpy(s->rot, r, sizeof(mat4x4));
@@ -175,7 +171,8 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	s->accTFactor	= 1.2;
 	s->accSpeed	= 16;
 	s->baseSpeed	= 8;
-	s->health = 1;
+	s->maxHealth = 5;
+	s->health = s->maxHealth;
 
 	ListAdd(&G_ships, s);
 

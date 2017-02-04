@@ -15,9 +15,40 @@
 
 
 void G_ShipHit(Ship* s, Bullet* b) {
-	s->health--;
+	if (SYS_GetTime() > s->shieldTime + G_SHIP_INVULN_TIME)
+		s->health--;
 
-	G_DeleteBullet(b);
+	// Hämta vektorn från skölden till impact stället
+	vec3 sphere;
+	vec3_sub(sphere, b->pos, s->pos);
+
+	// Spara vektorn där skeppet träffades
+	vec4 corrected;
+	mat4x4 inv;
+	mat4x4_invert(inv, s->rot); // Ta bort rotationen
+	mat4x4_mul_vec4(corrected, inv, sphere);
+	memcpy(s->shieldHit, corrected, sizeof(vec3));
+	s->shieldTime = SYS_GetTime();
+
+	// Beräkna vel-vektorns avstånd längs med vektorn
+	float d = -vec3_mul_inner(b->vel, sphere);
+
+	// Om skottet redan är på väg ifrån skölden ska inget göras
+	float dir = d / abs(d);
+	float sDir = vec3_len(sphere);
+	sDir = sDir / abs(sDir);
+	if (dir == sDir) return;
+
+	// Addera det två gånger till skottets hastighet
+	vec3_scale(sphere, sphere, d);
+	vec3_add(b->vel, b->vel, sphere);
+	vec3_add(b->vel, b->vel, sphere);
+
+	// Sakta ner skottet när det studsar
+	vec3_scale(b->vel, b->vel, 0.3);
+
+	// Om skölden är nere absorberas skottet
+	if (s->health <= 1.0) G_DeleteBullet(b);
 }
 
 void G_PlayerTick(Ship* s) {

@@ -24,7 +24,7 @@
 
 extern Camera* camera;
 
-GLuint curShader, shader = 0, guiShader = 0;
+GLuint curShader, shader = 0, shieldShader = 0, guiShader = 0;
 int vertAttrib = 0, colAttrib = 1, uvAttrib = 2, nrmAttrib = 3;
 
 mat4x4 V_projMat, V_worldMat, V_modelMat;
@@ -51,6 +51,7 @@ void V_StartOpenGL() {
 
 	// Ladda shader programmen
 	shader = V_LoadShader("shader");
+	shieldShader = V_LoadShader("shield");
 	guiShader = V_LoadShader("gui");
 	V_SetShader(shader);
 
@@ -59,6 +60,8 @@ void V_StartOpenGL() {
 	glBindAttribLocation(shader, colAttrib, "color_in");
 	glBindAttribLocation(shader, nrmAttrib, "normal_in");
 	glBindAttribLocation(shader, uvAttrib, "uv_in");
+	glBindAttribLocation(shieldShader, vertAttrib, "vertex_in");
+	glBindAttribLocation(shieldShader, uvAttrib, "uv_in");
 	glBindAttribLocation(guiShader, vertAttrib, "vertex_in");
 	glBindAttribLocation(guiShader, uvAttrib, "uv_in");
 
@@ -71,6 +74,8 @@ void V_StartOpenGL() {
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glCullFace(GL_FRONT);
 	
 	glGetError(); // Rensar listan med felmeddelanden
 
@@ -370,9 +375,10 @@ GLuint V_LoadShader(const char* name) {
 }
 
 void V_RenderModel(Model* m) {
-	if (curShader == shader) {
+	if (curShader == shader || curShader == shieldShader) {
 		mat4x4 tmp, tmp2;
 		mat4x4_mul(tmp, V_worldMat, V_modelMat);
+		V_SetParam4m("world_mat", tmp);
 		mat4x4_mul(tmp2, V_projMat, tmp);
 		V_SetParam4m("proj_mat", tmp2);
 
@@ -409,6 +415,11 @@ void V_SetDepthTesting(bool b) {
 
 void V_SetDepthWriting(bool b) {
 	glDepthMask(b);
+}
+
+void V_SetFaceCulling(bool cull) {
+	if (cull) glEnable(GL_CULL_FACE);
+	else glDisable(GL_CULL_FACE);
 }
 
 void V_UseTextures(bool b) {
@@ -460,5 +471,10 @@ void V_SetParam1f(const char* var, float f) {
 void V_SetParam2f(const char* var, float x, float y) {
 	GLuint id = glGetUniformLocation(curShader, var);
 	glUniform2f(id, x, y);
+}
+
+void V_SetParam3f(const char* var, float x, float y, float z) {
+	GLuint id = glGetUniformLocation(curShader, var);
+	glUniform3f(id, x, y, z);
 }
 

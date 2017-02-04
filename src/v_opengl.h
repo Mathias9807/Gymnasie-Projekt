@@ -28,7 +28,7 @@ typedef struct {
 	int numVerts;
 } Model;
 
-extern GLuint curShader, shader, guiShader;
+extern GLuint curShader, shader, shieldShader, guiShader;
 extern float V_vertFov;
 
 Model* V_LoadModel(const char* path);
@@ -47,7 +47,7 @@ void V_SetTexRepeating(int tex, bool b);
 void V_SetTexInterLinear(int tex, bool b);
 void V_SetTexMipmapLinear(int tex, bool b);
 void V_MakeProjection();
-void V_SetFaceCullingBack(bool back);
+void V_SetFaceCulling(bool cull);
 void V_UseTextures(bool b);
 void V_IsParticle(bool b);
 
