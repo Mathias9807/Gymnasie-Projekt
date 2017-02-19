@@ -237,7 +237,8 @@ void V_Tick() {
 	V_UseTextures(true);
 
 	// Rita siktena om spelaren har kontroll över skeppet
-	if (GUI_currentMenu && !GUI_currentMenu->focusGrabbed) {
+	if (GUI_currentMenu && !GUI_currentMenu->focusGrabbed
+			&& G_player->health > 0) {
 		// Rita det närmre siktet
 		mat4x4_translate(V_modelMat,
 			G_player->pos[0], G_player->pos[1], G_player->pos[2]);

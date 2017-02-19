@@ -50,6 +50,8 @@ struct Ship {
 	int health, maxHealth; // Skeppets HP
 	vec3 shieldHit; // Koordinaten rel till skeppet där det träffades senast
 	double shieldTime; // Tiden då den träffades senast
+	Ship* target; // Används för AI:n
+	double lastShot;
 
 	double ex0, ex1; // Timers för skeppets "exhaust"
 	double deadTime; // Håller tiden då skeppet fick health == 0

@@ -77,6 +77,13 @@ void G_Tick() {
 
 		for (int i = 0; i < 3; i++)
 			s->pos[i] += s->vel[i] * SYS_dSec;
+
+		if (s->health <= 0) {
+			if (s->deadTime == 0) s->deadTime = SYS_GetTime();
+
+			if (s->ai && s->ai->onDying)
+				s->ai->onDying(s);
+		}
 	}
 
 	// Applicera hastigheten till alla partiklar
@@ -170,7 +177,7 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 
 	s->accTFactor	= 1.2;
 	s->accSpeed	= 16;
-	s->baseSpeed	= 8;
+	s->baseSpeed	= 12;
 	s->maxHealth = 5;
 	s->health = s->maxHealth;
 

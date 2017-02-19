@@ -56,6 +56,7 @@ void G_PlayerTick(Ship* s) {
 	G_ShipExhaust(s, (vec3) { 0.18, 0, 1}, &s->ex1);
 
 	if (GUI_currentMenu && GUI_currentMenu->focusGrabbed) return;
+	if (s->health < 1) return;
 
 	// Beräkna den nya accelerationen
 	float boost = 0;
@@ -85,13 +86,57 @@ void G_AiBasicTick(Ship* s) {
 	G_ShipExhaust(s, (vec3) {-0.18, 0, 1}, &s->ex0);
 	G_ShipExhaust(s, (vec3) { 0.18, 0, 1}, &s->ex1);
 
-	G_RotateShip(s, 0, 0, 1 * SYS_dSec);
+	if (s->target && s->target->health > 0) {
+		Ship* t = s->target;
 
-	if (s->health <= 0) {
-		if (s->deadTime == 0) s->deadTime = SYS_GetTime();
+		// if (SYS_GetTime() - s->lastShot > 1) {
+		// 	s->lastShot = SYS_GetTime();
+		// 	vec4 diff, n;
+		// 	vec4_sub(diff, t->pos, s->pos);
+		// 	vec4_norm(n, diff);
+		// 	vec4_scale(diff, n, 50);
+		// 	G_AddBullet(s, 2, s->pos, diff, 0.3);
+		// }
+		// G_RotateShip(s, 0, 0, 1 * SYS_dSec);
+		// vec4 right = (vec4) {1, 0, 0, 1}, r;
+		// mat4x4_mul_vec4(r, s->rot, right);
+		// vec4 
+		vec4 p, uP, rP;
+		vec4_sub(p, t->pos, s->pos);
+		vec4_norm(uP, p);
+		mat4x4 inv; mat4x4_invert(inv, s->rot);
+		mat4x4_mul_vec4(rP, inv, uP);
+		float rotSpeed = 0.7;
+		if (rP[0] > 0.1) G_RotateShip(s, 0, rotSpeed * SYS_dSec, 0);
+		if (rP[0] < -0.1) G_RotateShip(s, 0, -rotSpeed * SYS_dSec, 0);
+		if (rP[1] > 0.1) G_RotateShip(s, rotSpeed * SYS_dSec, 0, 0);
+		if (rP[1] < -0.1) G_RotateShip(s, -rotSpeed * SYS_dSec, 0, 0);
 
-		if (s->ai && s->ai->onDying)
-			s->ai->onDying(s);
+		if (rP[2] < 0 && abs(rP[0]) < 0.1 && abs(rP[1]) < 0.1) {
+			if (SYS_GetTime() - s->lastShot > 1) {
+				s->lastShot = SYS_GetTime();
+				vec4 forwards = {0, 0, -1, 1}, n;
+				mat4x4_mul_vec4(n, s->rot, forwards);
+				vec4_norm(forwards, n);
+				vec4_scale(n, forwards, 150);
+				G_AddBullet(s, 2, s->pos, n, 0.3);
+			}
+		}
+	}else {
+		double closest = 10000000.0;
+		Ship* nTarget = G_ships.first->value;
+		for (int i = 0; i < G_ships.size; i++) {
+			Ship* ss = ListGet(&G_ships, i);
+			if (ss == s || ss->health < 1) continue;
+			double c = (s->pos[0]-ss->pos[0])*(s->pos[0]-ss->pos[0])
+				+ (s->pos[1]-ss->pos[1])*(s->pos[1]-ss->pos[1])
+				+ (s->pos[2]-ss->pos[2])*(s->pos[2]-ss->pos[2]);
+			if (c < closest) {
+				closest = c;
+				nTarget = ss;
+			}
+		}
+		s->target = nTarget;
 	}
 }
 
