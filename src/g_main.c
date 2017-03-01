@@ -20,7 +20,7 @@ Ship* G_player;
 List G_particles;
 List G_bullets;
 
-Ai playerAi, stupidAi;
+Ai G_playerAi, G_stupidAi;
 
 // Läs in kameran
 Camera cam = {
@@ -34,19 +34,11 @@ double acceleration(double t) {
 }
 
 void G_InitLevel() {
-	playerAi = (Ai) {NULL, G_PlayerTick, G_Die, G_ShipHit, G_OnDying};
-	stupidAi = (Ai) {NULL, G_AiBasicTick, G_Die, G_ShipHit, G_OnDying};
-
-	G_player = G_AddShip(NULL, NULL, NULL, &playerAi);
-
-	G_AddShip((vec3) {1, 9, -50}, NULL, NULL, &stupidAi);
-	G_AddShip((vec3) {9, 5, -50}, NULL, NULL, &stupidAi);
-	G_AddShip((vec3) {-5, 9, -60}, NULL, NULL, &stupidAi);
-
-	G_AddParticle(0, (vec3) {20, 0, 0}, NULL, 1, 0);
-	
+	G_playerAi = (Ai) {NULL, G_PlayerTick, G_Die, G_ShipHit, G_OnDying};
+	G_stupidAi = (Ai) {NULL, G_AiBasicTick, G_Die, G_ShipHit, G_OnDying};
 	V_SetCamera(&cam);
-	V_SetCameraFocus(G_player);
+
+	GUI_OpenMainMenu();
 }
 
 void G_Tick() {
@@ -81,8 +73,23 @@ void G_Tick() {
 		if (s->health <= 0) {
 			if (s->deadTime == 0) s->deadTime = SYS_GetTime();
 
-			if (s->ai && s->ai->onDying)
+			if (SYS_GetTime() - s->deadTime > G_SHIP_DYING_TIME) {
+				if (s->ai && s->ai->die) {
+					s->ai->die(s);
+
+					// 'die' ska bara köras en gång
+					// Därför sätts nollas s->ai
+					s->ai = NULL;
+					s->invisible = true;
+				}
+			}else if (s->ai && s->ai->onDying) {
 				s->ai->onDying(s);
+			}
+
+			if (SYS_GetTime() - s->deadTime > G_SHIP_DEATH_WAIT) {
+				G_DeleteShip(s);
+				if (s->onDeath) s->onDeath();
+			}
 		}
 	}
 
@@ -184,7 +191,7 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	ListAdd(&G_ships, s);
 
 	if (ai) s->ai = ai;
-	if (ai->spawn) s->ai->spawn(s);
+	if (ai && ai->spawn) s->ai->spawn(s);
 
 	s->source = S_CreateSource(s);
 	S_PlayClip(&S_rockets, s->source, true);
@@ -208,6 +215,10 @@ Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life) {
 	p->spawnTime = SYS_GetTime();
 
 	return ListAdd(&G_particles, p);
+}
+
+void G_DeleteParticle(Particle* p) {
+	ListRemove(&G_particles, ListFind(&G_particles, p));
 }
 
 Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale) {

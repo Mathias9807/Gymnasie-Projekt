@@ -64,6 +64,10 @@ G_main {
 	G_Tick() Kallar fysik funktionerna och flyttar skeppen
 }
 
+G_level {
+	G_SetupDemoLevel() Skapar några AI skepp som spelar FFA
+}
+
 GUI_main {
 	struct MenuComp {	En komponent t.ex en knapp, en textruta
 		enum compType	Vilken slags komponent objektet representerar

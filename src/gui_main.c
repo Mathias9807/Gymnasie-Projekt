@@ -9,6 +9,7 @@
 
 #include "gui_main.h"
 #include "g_main.h"
+#include "g_level.h"
 #include "sys_input.h"
 #include "sys_main.h"
 #include "v_main.h"
@@ -16,14 +17,24 @@
 
 
 Menu mainMenu = {0}, inGameMenu = {0};
-Menu* GUI_currentMenu = &mainMenu;
+Menu* GUI_currentMenu = NULL;
 
 // Modellen som används för att rita ut rektanglar
 extern Model* unitPlane;
 
 extern int abstractBox;
 
-static void openInGameMenu() { GUI_ChangeMenu(&inGameMenu); }
+void GUI_OpenInGameMenu() {
+	GUI_ChangeMenu(&inGameMenu);
+}
+void GUI_OpenMainMenu() {
+	G_SetupDemoLevel();
+	GUI_ChangeMenu(&mainMenu);
+}
+void GUI_Play() {
+	G_SetupFFA(true, 5);
+	GUI_ChangeMenu(&inGameMenu);
+}
 
 void GUI_Init() {
 	// Skapa huvud menyn
@@ -40,7 +51,7 @@ void GUI_Init() {
 		stp = GUI_CreateLabel(&mainMenu,
 				"Quit", (vec2) {0.5, 0.6}, 0.04, true);
 
-		GUI_CompAddAction(ply, openInGameMenu);
+		GUI_CompAddAction(ply, GUI_Play);
 		GUI_CompAddAction(ctr, NULL);
 		GUI_CompAddAction(stp, SYS_Quit);
 

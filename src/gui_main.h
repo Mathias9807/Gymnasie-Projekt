@@ -64,6 +64,10 @@ void GUI_RenderComp(MenuComp* comp);
 void GUI_ChangeMenu(Menu* m);
 void GUI_CompAddAction(MenuComp* c, void (*action)());
 
+void GUI_OpenInGameMenu();
+void GUI_OpenMainMenu();
+void GUI_Play();
+
 MenuComp* GUI_CreateSelector(Menu* m);
 MenuComp* GUI_CreateLabel(Menu* m, char* text, vec2 pos, float size, bool centered);
 void GUI_SelectorTick(MenuComp* self);

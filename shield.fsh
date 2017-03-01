@@ -9,7 +9,6 @@ uniform sampler2D diffuse_tex;
 uniform float alpha;
 
 uniform vec3 hlCenter; // Highlight information
-uniform vec3 ship;
 uniform float hlTime;
 uniform float health;
 

@@ -31,9 +31,11 @@ typedef struct Ai {
 	void (*onHit)(struct Ship*, Bullet*);
 	void (*onDying)(struct Ship*);
 } Ai;
+extern Ai G_playerAi, G_stupidAi;
 
 #define G_SHIP_INVULN_TIME 0.25
 #define G_SHIP_DYING_TIME 1.0
+#define G_SHIP_DEATH_WAIT 2.5
 struct Ship {
 	vec3 pos, vel;
 	mat4x4 rot;
@@ -57,6 +59,8 @@ struct Ship {
 	double deadTime; // Håller tiden då skeppet fick health == 0
 	double flameTimer; // Används för att skjuta ut eld at death
 	Ai* ai; // Skeppets interna logik
+	void (*onDeath)(); // Kallas när skeppet sprängs
+	bool invisible; // Om skeppet ska ignoreras vid rendering
 
 	AudioSource* source; // Ljudkällan som ljud spelas från
 };
@@ -128,7 +132,7 @@ void G_ShipExhaust(Ship* s, vec3 offs, double* lastExhaust);
 // 	float life	How long the particle should live for
 //
 Particle* G_AddParticle(int tex, vec3 pos, vec3 vel, float scale, double life);
-void G_DeleteBullet(Bullet* b);
+void G_DeleteParticle(Particle* p);
 
 // Create a new bullet
 // 	Ship* s		The ship that fired the bullet
@@ -139,6 +143,7 @@ void G_DeleteBullet(Bullet* b);
 // 	float life	How long the bullet should live for
 //
 Bullet* G_AddBullet(Ship* s, int tex, vec3 pos, vec3 vel, float scale);
+void G_DeleteBullet(Bullet* b);
 
 
 #endif // G_MAIN_H

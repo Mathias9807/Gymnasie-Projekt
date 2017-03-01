@@ -106,11 +106,11 @@ void G_AiBasicTick(Ship* s) {
 		vec4_norm(uP, p);
 		mat4x4 inv; mat4x4_invert(inv, s->rot);
 		mat4x4_mul_vec4(rP, inv, uP);
-		float rotSpeed = 0.7;
-		if (rP[0] > 0.1) G_RotateShip(s, 0, rotSpeed * SYS_dSec, 0);
-		if (rP[0] < -0.1) G_RotateShip(s, 0, -rotSpeed * SYS_dSec, 0);
-		if (rP[1] > 0.1) G_RotateShip(s, rotSpeed * SYS_dSec, 0, 0);
-		if (rP[1] < -0.1) G_RotateShip(s, -rotSpeed * SYS_dSec, 0, 0);
+		float rotSpeed = 1, prec = 0.02;
+		if (rP[0] > prec) G_RotateShip(s, 0, rotSpeed * SYS_dSec, 0);
+		if (rP[0] < -prec) G_RotateShip(s, 0, -rotSpeed * SYS_dSec, 0);
+		if (rP[1] > prec) G_RotateShip(s, rotSpeed * SYS_dSec, 0, 0);
+		if (rP[1] < -prec) G_RotateShip(s, -rotSpeed * SYS_dSec, 0, 0);
 
 		if (rP[2] < 0 && abs(rP[0]) < 0.1 && abs(rP[1]) < 0.1) {
 			if (SYS_GetTime() - s->lastShot > 1) {
@@ -118,7 +118,7 @@ void G_AiBasicTick(Ship* s) {
 				vec4 forwards = {0, 0, -1, 1}, n;
 				mat4x4_mul_vec4(n, s->rot, forwards);
 				vec4_norm(forwards, n);
-				vec4_scale(n, forwards, 150);
+				vec4_scale(n, forwards, 300);
 				G_AddBullet(s, 2, s->pos, n, 0.3);
 			}
 		}
@@ -156,11 +156,6 @@ void G_OnDying(Ship* s) {
 
 		s->flameTimer += 1.0 / freq;
 	}
-
-	if (SYS_GetTime() - s->deadTime > G_SHIP_DYING_TIME) {
-		if (s->ai && s->ai->die)
-			s->ai->die(s);
-	}
 }
 
 void G_Die(Ship* s) {
@@ -181,7 +176,5 @@ void G_Die(Ship* s) {
 			speed * ((double) rand() / RAND_MAX * 2 - 1), 0
 		}, 2, 0.5);
 	}
-
-	G_DeleteShip(s);
 }
 

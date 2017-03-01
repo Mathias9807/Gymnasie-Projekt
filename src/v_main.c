@@ -162,6 +162,7 @@ void V_Tick() {
 	V_UseTextures(false);
 	for (int i = 0; i < G_ships.size; i++) {
 		Ship* s = ListGet(&G_ships, i);
+		if (s->invisible) continue;
 
 		mat4x4_translate(V_modelMat, s->pos[0], s->pos[1], s->pos[2]);
 		mat4x4_mul(V_modelMat, V_modelMat, s->rot);
@@ -178,10 +179,10 @@ void V_Tick() {
 	V_SetFaceCulling(true);
 	V_UseTextures(true);
 	V_SetShader(shieldShader);
-	V_SetParam3f("ship", G_player->pos[0], G_player->pos[1], G_player->pos[2]);
 	double curTime = SYS_GetTime();
 	for (int i = 0; i < G_ships.size; i++) {
 		Ship* s = ListGet(&G_ships, i);
+		if (s->invisible) continue;
 
 		V_SetParam1f("alpha", 0.1 + 0.2 * s->health / s->maxHealth);
 		V_SetParam3f("hlCenter", s->shieldHit[0],
@@ -238,7 +239,7 @@ void V_Tick() {
 
 	// Rita siktena om spelaren har kontroll över skeppet
 	if (GUI_currentMenu && !GUI_currentMenu->focusGrabbed
-			&& G_player->health > 0) {
+			&& G_player && G_player->health > 0) {
 		// Rita det närmre siktet
 		mat4x4_translate(V_modelMat,
 			G_player->pos[0], G_player->pos[1], G_player->pos[2]);
@@ -289,6 +290,15 @@ void V_SetCamera(Camera* c) {
 }
 
 void V_SetCameraFocus(Ship* s) {
+	if (s == NULL) {
+		if (camera->ghost != NULL) {
+			free(camera->ghost);
+		}
+		camera->focus = camera->ghost = NULL;
+
+		return;
+	}
+
 	camera->focus = s;
 
 	Ship* g = calloc(1, sizeof(Ship));
