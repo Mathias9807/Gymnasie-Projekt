@@ -45,7 +45,7 @@ void G_ShipHit(Ship* s, Bullet* b) {
 	vec3_add(b->vel, b->vel, sphere);
 
 	// Sakta ner skottet när det studsar
-	vec3_scale(b->vel, b->vel, 0.3);
+	// vec3_scale(b->vel, b->vel, 0.3);
 
 	// Om skölden är nere absorberas skottet
 	if (s->health <= 1.0) G_DeleteBullet(b);
@@ -75,9 +75,9 @@ void G_PlayerTick(Ship* s) {
 
 	static bool atkHeld = false;
 	if (SYS_keys[IN_ATTACK] && !atkHeld) {
-		vec4 v = {0, 0, -50, 0}, r;
+		vec4 v = {0, 0, -100, 0}, r;
 		mat4x4_mul_vec4(r, G_player->rot, v);
-		G_AddBullet(s, 3, s->pos, r, 0.3);
+		G_AddBullet(s, 3, s->pos, r, 0.8);
 	}
 	atkHeld = SYS_keys[IN_ATTACK];
 }
@@ -118,8 +118,8 @@ void G_AiBasicTick(Ship* s) {
 				vec4 forwards = {0, 0, -1, 1}, n;
 				mat4x4_mul_vec4(n, s->rot, forwards);
 				vec4_norm(forwards, n);
-				vec4_scale(n, forwards, 300);
-				G_AddBullet(s, 3, s->pos, n, 0.3);
+				vec4_scale(n, forwards, 200);
+				G_AddBullet(s, 3, s->pos, n, 0.8);
 			}
 		}
 	}else {
