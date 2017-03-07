@@ -19,7 +19,7 @@ Camera* camera;
 
 vec2 parallaxShift;
 
-Model* ship, * cube, * shield;
+Model* ship, * cube, * shield, * blaster;
 Model* plane;
 Model* unitPlane;
 Model* billboard;
@@ -38,6 +38,7 @@ void LoadResources() {
 	shield = V_LoadModel("res/Shield.dae");
 	plane = V_LoadModel("res/Plane.dae");
 	unitPlane = V_LoadModel("res/unit-plane.dae");
+	blaster = V_LoadModel("res/blaster.dae");
 	billboard = V_LoadModel("res/billboard.dae");
 
 	tex = V_LoadTexture("res/Cubemap 1/Cubemap.png");
@@ -53,6 +54,7 @@ void LoadResources() {
 	partTextures[i++] = V_LoadTexture("res/Smoke.png");
 	partTextures[i++] = V_LoadTexture("res/Flame.png");
 	partTextures[i++] = V_LoadTexture("res/Sphere.png");
+	partTextures[i++] = V_LoadTexture("res/Blaster.png");
 }
 
 void V_Init() {
@@ -220,17 +222,42 @@ void V_Tick() {
 
 		V_RenderModel(billboard);
 	}
+	V_IsParticle(false);
+	V_UseTextures(true);
 	for (int i = 0; i < G_bullets.size; i++) {
 		Bullet* b = ListGet(&G_bullets, i);
 		V_BindTexture(partTextures[b->texture], 0);
 
-		mat4x4_translate(V_modelMat, b->pos[0], b->pos[1], b->pos[2]);
-		mat4x4_scale(V_modelMat, V_modelMat, 1 / b->scale);
+		// Skapa xyz vektorerna och spara i en matris
+		vec4 x = {0}, y = {0}, z = {0}, c = {0};
+		vec4 tmp = {0};
+		vec3_sub(tmp, camera->pos, b->pos);
+		vec3_norm(c, tmp);
+		
+		vec3_norm(y, b->vel);
 
-		V_RenderModel(billboard);
+		vec3_mul_cross(x, y, c);
+		vec3_mul_cross(z, x, y);
+
+		mat4x4 rot;
+		memcpy(rot[0], x, sizeof(vec4));
+		memcpy(rot[1], y, sizeof(vec4));
+		memcpy(rot[2], z, sizeof(vec4));
+
+		// Multiplicera matrisen med 1/scale
+		mat4x4 tmpMat; mat4x4_identity(tmpMat); mat4x4_identity(V_modelMat);
+		vec3_scale(tmpMat[0], tmpMat[0], b->scale);
+		vec3_scale(tmpMat[1], tmpMat[1], b->scale);
+		vec3_scale(tmpMat[2], tmpMat[2], b->scale);
+		mat4x4_mul(V_modelMat, rot, tmpMat);
+
+		// Skriv över translationen i matrisen
+		memcpy(V_modelMat[3], b->pos, sizeof(vec3));
+
+		V_RenderModel(blaster);
 	}
+
 	V_PopState();
-	V_IsParticle(false);
 	V_SetDepthWriting(false);
 	V_SetDepthTesting(false);
 

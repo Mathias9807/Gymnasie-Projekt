@@ -77,7 +77,7 @@ void G_PlayerTick(Ship* s) {
 	if (SYS_keys[IN_ATTACK] && !atkHeld) {
 		vec4 v = {0, 0, -50, 0}, r;
 		mat4x4_mul_vec4(r, G_player->rot, v);
-		G_AddBullet(s, 2, s->pos, r, 0.3);
+		G_AddBullet(s, 3, s->pos, r, 0.3);
 	}
 	atkHeld = SYS_keys[IN_ATTACK];
 }
@@ -106,7 +106,7 @@ void G_AiBasicTick(Ship* s) {
 		vec4_norm(uP, p);
 		mat4x4 inv; mat4x4_invert(inv, s->rot);
 		mat4x4_mul_vec4(rP, inv, uP);
-		float rotSpeed = 1, prec = 0.02;
+		float rotSpeed = 0.5, prec = 0.2;
 		if (rP[0] > prec) G_RotateShip(s, 0, rotSpeed * SYS_dSec, 0);
 		if (rP[0] < -prec) G_RotateShip(s, 0, -rotSpeed * SYS_dSec, 0);
 		if (rP[1] > prec) G_RotateShip(s, rotSpeed * SYS_dSec, 0, 0);
@@ -119,7 +119,7 @@ void G_AiBasicTick(Ship* s) {
 				mat4x4_mul_vec4(n, s->rot, forwards);
 				vec4_norm(forwards, n);
 				vec4_scale(n, forwards, 300);
-				G_AddBullet(s, 2, s->pos, n, 0.3);
+				G_AddBullet(s, 3, s->pos, n, 0.3);
 			}
 		}
 	}else {
