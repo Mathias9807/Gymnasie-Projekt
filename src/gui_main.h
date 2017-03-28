@@ -16,7 +16,7 @@
 
 // Alla komponent typer
 typedef enum {
-	Box, Label, Selector
+	Box, Label, Selector, Radar
 } MenuCompType;
 
 // En komponent i en meny
@@ -43,6 +43,8 @@ typedef struct MenuComp {
 			char text[256];	// Max 256 bokstäver
 			float scale;	// Påverkar storleken av texten
 		} label;
+		struct {
+		} radar;
 	} data;
 } MenuComp;
 
@@ -70,7 +72,9 @@ void GUI_Play();
 
 MenuComp* GUI_CreateSelector(Menu* m);
 MenuComp* GUI_CreateLabel(Menu* m, char* text, vec2 pos, float size, bool centered);
+MenuComp* GUI_CreateRadar(Menu* m);
 void GUI_SelectorTick(MenuComp* self);
+void GUI_RadarTick(MenuComp* self);
 
 
 #endif // GUI_MAIN_H

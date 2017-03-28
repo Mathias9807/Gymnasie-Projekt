@@ -21,6 +21,7 @@ Menu* GUI_currentMenu = NULL;
 
 // Modellen som används för att rita ut rektanglar
 extern Model* unitPlane;
+int dot, redDot;
 
 extern int abstractBox;
 
@@ -32,11 +33,14 @@ void GUI_OpenMainMenu() {
 	GUI_ChangeMenu(&mainMenu);
 }
 void GUI_Play() {
-	G_SetupFFA(true, 5);
+	G_SetupFFA(true, 12);
 	GUI_ChangeMenu(&inGameMenu);
 }
 
 void GUI_Init() {
+	dot = V_LoadTexture("res/Dot.png");
+	redDot = V_LoadTexture("res/Red dot.png");
+
 	// Skapa huvud menyn
 	{
 		mainMenu.focusGrabbed = true;
@@ -61,6 +65,8 @@ void GUI_Init() {
 	// Skapa menyn som visas under gameplay
 	{
 		inGameMenu.focusGrabbed = false;
+
+		GUI_CreateRadar(&inGameMenu);
 	}
 }
 
@@ -124,13 +130,56 @@ void GUI_RenderComp(MenuComp* comp) {
 				V_FONT_CHAR_SIZE, t->pos[1] - scale / 2}, scale);
 
 		break;
-	}case Box:
+	}case Box: {
 		V_SetParam2f("subPos", 0, 0);
 		V_SetParam2f("subSize", 1, 1);
 		V_BindTexture(abstractBox, 0);
 		V_RenderModel(unitPlane);
 
 		break;
+	}case Radar: {
+		V_SetParam2f("subPos", 0, 0);
+		V_SetParam2f("subSize", 1, 1);
+		vec2 p = {0.1, 0.8};
+		float scl = 0.1;
+		float ratio = (float) SYS_GetWidth() / SYS_GetHeight();
+		V_SetShader(guiShader);
+		V_BindTexture(dot, 0);
+		V_ApplyCamera();
+		for (int i = 0; i < G_ships.size; i++) {
+			Ship* s = ListGet(&G_ships, i);
+			if (G_player == s || s->health <= 0) continue;
+
+			vec4 d = {0, 0, 0, 1}, r = {0, 0, 0, 1}, P;
+			memcpy(P, s->pos, sizeof(vec3)); P[3] = 1.0;
+
+			// World offset between player and ship
+			vec3_sub(d, P, G_player->pos);
+
+			// Rotate offset to player space
+			mat4x4 inv;
+			mat4x4_invert(inv, G_player->rot);
+			mat4x4_mul_vec4(r, inv, d);
+			vec3_norm(d, r);
+			if (d[2] > 0) V_BindTexture(redDot, 0);
+			else V_BindTexture(dot, 0);
+
+			float localSize = 0.02 / (1 + abs(d[2] / 8));
+			V_SetParam2f("pos", p[0] + d[0]*scl, p[1] - d[1]*scl);
+			V_SetParam2f("size", localSize, ratio * localSize);
+			V_RenderModel(unitPlane);
+		}
+		V_BindTexture(dot, 0);
+		V_SetParam2f("pos", p[0] - 0.005, p[1] - 0.1);
+		V_SetParam2f("size", 0.01, 0.2);
+		V_RenderModel(unitPlane);
+
+		V_SetParam2f("pos", p[0] - 0.1, p[1] - 0.005);
+		V_SetParam2f("size", 0.2, 0.01);
+		V_RenderModel(unitPlane);
+
+		break;
+	}
 	}
 }
 

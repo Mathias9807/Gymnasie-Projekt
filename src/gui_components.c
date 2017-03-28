@@ -57,6 +57,15 @@ MenuComp* GUI_CreateSelector(Menu* m) {
 	return c;
 }
 
+MenuComp* GUI_CreateRadar(Menu* m) {
+	MenuComp* c	= calloc(1, sizeof(MenuComp));
+	c->type		= Radar;
+	c->tick		= GUI_RadarTick;
+
+	ListAdd(&m->comps, c);
+	return c;
+}
+
 void GUI_SelectorTick(MenuComp* self) {
 	bool up = false, down = false, action = false;
 
@@ -119,5 +128,8 @@ skipDown:
 			&& self->data.selector.selected->action) {
 		self->data.selector.selected->action();
 	}
+}
+
+void GUI_RadarTick(MenuComp* self) {
 }
 
