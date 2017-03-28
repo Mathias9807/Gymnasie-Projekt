@@ -24,7 +24,7 @@
 
 #define TITLE "Space"
 #undef VERSION
-#define VERSION "indev"
+#define VERSION "0.1 alpha"
 
 #define PATH_LENGTH 256
 
