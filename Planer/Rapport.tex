@@ -17,18 +17,23 @@
 \begin{document}
 	\maketitle
 	
-	{\Large Frågor}
-	\begin{itemize}
-		\item Formulering av frågeställning
-		\item Vad ska jag ta upp i Genomförandet?
-		\item När ska man förklara idéen?
-	\end{itemize}
+	\vfill
+	
+	\begin{center}
+		{Gymnasiearbete 2016-2017 \hfill Peter Ågren \& David Nordqvist}
+	\end{center}
+	
+	\begin{center}
+		{De la Gardiegymnasiet, Lidköping \hfill Teknikprogrammet}
+	\end{center}
 	
 	\newpage
 	
 	\begin{center}
 		\Large\textbf{Abstract}
 	\end{center}
+	
+	Modern games are often built using game engines, which let the developers focus more on building the games mechanics by abstracting away the hardware. However this hides the details in programming a game. To explore what goes into developing a complete game a simple 3D space game is built. It was constructed from the ground up and showed that while certain games may benefit from the control of building a game from scratch, for most games a game engine let the developers focus more on building the game and less on fighting the platform. 
 	
 	\begin{small}
 		The English summary (abstract) should be read as a stand-alone text. It should
@@ -47,28 +52,14 @@ text. The abstract is written at the very end when you have finished the essay.
 
 	Moderna datorspel är väldigt komplicerade program. Att skapa ett spel involverar grafikprogrammering, simulation av fysik, inmatningshantering med mera. Det finns många spelmotorer och verktyg som förenklar hela skapandeprocessen men de gömmer även hur allting fungerar. Därför vill jag ta reda på vad som ingår i att programmera ett spel med 3D grafik från grunden utan hjälp av färdiga spelmotorer. 
 	
-	\begin{small}
-		I inledningen leder du läsaren in på ämnet för uppsatsen och fångar läsarens
-intresse. Berätta vad du kommer att göra i gymnasiearbetet. I inledningen får
-du vara personlig, vilket ofta är ett bra sätt att väcka intresset.
-	\end{small}
-	
 	\subsection{Syfte och mål}
 	
-	Med det här gymnasiearbetet vill jag ta reda på vad som ingår i utvecklingsprocessen för dataspel. Jag ska undersöka vilka delmoment som tar mest arbete och vad det är som spelmotorer förenklar. Målet är att skapa ett komplett tredimensionellt spel som inkluderar alla vanliga funktioner bland moderna spel. 
-	
-	Syftet med gymnasiearbetet är att ta reda på vad som ingår i att programmera ett tredimensionellt spel som innefattar alla funktioner som moderna spel har utan att ta hjälp av färdiga spelmotorer. Detta ska göras genom att ett spel programmeras från grunden. Spelet kommer vara ett tredimensionellt rymdspel där spelarens mål är att skjuta ner de andra skeppen. 
-	
-	Syftet med gymnasiearbetet är att ta reda på om en elev kan programmera ett helt tredimensionellt spel utan hjälp av färdiga spelmotorer. 
-	
-	Målet med gymnasiearbetet är att skapa ett spel från grunden som omfattar 3D grafik, ljud, inmatningshantering, artificiell intelligens och användargränssnitt. \\
+	Syftet med gymnasiearbetet är att ta reda på vad som ingår i att programmera ett tredimensionellt spel som innefattar alla funktioner som moderna spel har utan att ta hjälp av färdiga spelmotorer. Detta ska göras genom att ett spel programmeras från grunden. Spelet kommer vara ett tredimensionellt rymdspel där spelarens mål är att skjuta ner de andra skeppen. \\
 	
 	\noindent Gymnasiearbetet kopplas till följande examensmål:
 	
 	\begin{quote} \small
-		Utbildningen ska utveckla elevernas kunskaper om och färdigheter i teknik och teknisk utveckling. Den ska också belysa teknikens roll i samspelet mellan människa och natur med hänsyn till hållbar utveckling. Vidare ska utbildningen utveckla elevernas kunskaper om fysik, kemi och matematik med fokus på tekniska processer. I teknik ska eleverna undersöka, beskriva och systematisera olika egenskaper hos tekniska objekt och processer. I fysik och kemi ska eleverna undersöka, beskriva och systematisera olika företeelser i naturen samt göra kopplingar till tekniska processer. Matematik är inom teknikområdet ett språk och ett redskap för att förstå, uttrycka och analysera sammanhang. Det tekniska kunskapsområdet hanterar både befintlig teknik och utveckling av ny teknik.
-		
-Utbildningen ska bygga på ett etiskt och ansvarsfullt förhållningssätt till teknik och ett kritiskt, kreativt och konstruktivt tänkande ska främjas. I utbildningen ska eleverna ges möjlighet att utveckla förmåga att söka, sovra och bearbeta information med källkritisk medvetenhet. Utbildningen ska också innehålla kreativa och problemlösande arbetsformer samt ge förutsättningar för eleverna att utveckla ett tvärvetenskapligt förhållningssätt. Teori och praktisk tillämpning ska samverka och utbildningen ska ge eleverna kunskaper om och färdigheter i att samarbeta med andra. Eftersom utveckling av teknik ofta sker i projektarbetsform, ska utbildningen ge kunskaper om projektarbete och färdigheter i att arbeta i projekt såväl enskilt som i grupp. Centralt för teknikutveckling är att analysera, modellera, simulera, rimlighetsbedöma, utveckla, se samband, dra slutsatser och argumentera utifrån resultatet. Utbildningen ska därför utveckla elevernas förmåga att analysera och förstå tekniska system.
+		Utbildningen ska utveckla elevernas kunskaper om och färdigheter i teknik och teknisk utveckling. Vidare ska utbildningen utveckla elevernas kunskaper om fysik och matematik med fokus på tekniska processer. I teknik ska eleverna undersöka, beskriva och systematisera olika egenskaper hos tekniska objekt och processer. Matematik är inom teknikområdet ett språk och ett redskap för att förstå, uttrycka och analysera sammanhang. Det tekniska kunskapsområdet hanterar både befintlig teknik och utveckling av ny teknik.
 	\end{quote}
 	
 	\begin{small}
@@ -90,10 +81,6 @@ ska bidra till de kunskaper som uttrycks i examensmålen (Skolverket 2011, s.
 	Frågeställningen som ska besvaras är: 
 
 	\begin{center}
-		Kan en elev skapa ett tredimensionellt spel från grunden som innefattar grafik, fysik, ljud och allt annat som krävs av ett modernt spel?
-	\end{center}
-
-	\begin{center}
 		Vilka svårigheter och problem finns i att programmera ett tredimensionellt spel från grunden utan hjälp av en spelmotor?
 	\end{center}
 	
@@ -106,9 +93,9 @@ avgränsar sitt arbete (Skolverket 2011, s. 45).
 	
 	\subsection{Metod och material}
 	
-	För att organisera arbetet och för att få en bättre bild av hur arbetet fortskrider upprättas en tidsplan där en deadline sätts för varje stort delmål i projektet. För att organisera projektfilerna användes versionshanteringsprogrammet \code{git}. 
+	För att organisera arbetet och för att få en bättre bild av hur arbetet fortskrider upprättas en tidsplan där en deadline sätts för varje stort delmål i projektet. För att organisera projektfilerna användes programmet \code{git}. Det är ett program som sparar all historik i ett projekt och säkerhetskopierar alla filer. 
 	
-	Under arbetets gång kommer resurser som stackoverflow.com och cpluslpus.com användas som hjälpmedel för programmeringen. För att kontrollera datorns hårdvara måste flera olika programbibliotek användas. Då varje bibliotek fungerar på ett eget sätt krävs dokumentationen för varje bibliotek vilket hämtas från respektive biblioteks webbsida. 
+	Under arbetets gång kommer hemsidor som stackoverflow.com och cpluslpus.com användas. Stackoverflow.com är en hemsida där användare kan lägga upp frågor om hur något fungerar och svara på andras frågor. Det finns ett stort arkiv av svarade frågor där alla de vanligaste sakerna folk undrar över har ett tydligt svar. Cplusplus.com är en hemsida som dokumenterar alla detaljer i C och C++ språken och förklarar hur de fungerar. I detta gymnasiearbete kommer en stor del bestå av att kontrollera datorns hårdvara, till exempel måste grafiken ritas genom grafikkortet, data måste läsas från disken och inmatningen måste läsas från tangentbordet. Detta görs genom programbibliotek, mindre program som är byggda för att underlätta skapandet av större program. OpenGL används för grafiken, SDL för inmatningen och OpenAL för ljud. För att få reda på hur varje bibliotek ska användas kommer respektive biblioteks dokumentation att användas. 
 	
 	\begin{small}
 		Eleven upprättar en projektplan som utgår från en frågeställning eller en
@@ -133,23 +120,23 @@ valda metoderna och resultaten (Skolverket 2011, s. 46).
 	\newpage
 	\section{Genomförande}
 	
-	Arbetet började med att spelidéen utvecklades och att detaljerna fastställdes. Idéen med detaljerna skrevs ner i ett textdokument som senare användes som referens. Det andra förberendande steget var att välja programmeringsspråk och verktyg. Som programmeringsspråk valdes C då det fungerar väl på flera olika plattformar. Ett viktigt programbibliotek som användes var \code{linmath.h}, ett litet bibliotek som förenklar vektor och matris hantering. Vid det här steget bestämdes strukturen för hela spelmotorn. Då den består av så många delar är det viktigt att koden är modulariserad och uppdelad i flera källkodsfiler. Det förenklar utvecklingen sent i arbetet. 
+	Arbetet började med att spelidéen utvecklades och att detaljerna fastställdes. Idéen med detaljerna skrevs ner i ett textdokument som senare användes som referens. Det andra förberendande steget var att välja programmeringsspråk och verktyg. Som programmeringsspråk valdes C då det fungerar väl på flera olika plattformar. Ett viktigt programbibliotek som användes var \code{linmath.h}, ett litet bibliotek som förenklar vektor och matris hantering. Detta är användbart då det låter saker som positioner att lagras i en variabel (en vektor) istället för tre separata variabler (en X, Y och Z variabel). Vid det här steget bestämdes strukturen för hela spelmotorn. Då den består av så många olika delar (grafik, ljud, fysik, med mera) är det viktigt att koden är uppdelad i flera källkodsfiler. Det förenklar utvecklingen sent i arbetet. 
 	
 	Det första av programmet som skrevs var det som direkt rörde datorns hårdvara, det vill säga grafik, tangentbordsinmatning och filinläsning med mera. Just grafiksystemet var den första delen som skrevs. Det första som programmet behövde göra var då att öppna ett fönster. Eftersom varje operativsystem öppnar fönster på ett eget sätt användes programbiblioteket \code{SDL} vilket hanterar skillnader mellan operativsystem åt programmeraren. När programmet kunde öppna ett fönster kunde den riktiga grafikkoden skrivas. Moderna datorer använder en separat grafikprocessor för att hantera 3D grafik och för att få bra prestanda behövde programmet kunna tala med grafikkortet. Detta görs med hjälp av en av flera tillgängliga API:er\footnote{Application Programming Interface, ett slags protokoll mellan program}. Den som användes heter OpenGL och valdes då den har störst support mellan operativsystem av alternativen. 
 	
-	En viktig del av grafiksystemet är inläsning av resurser. I spelet används texturer och modeller som måste läsas från hårddisken och tolkas för att kunna användas. De filtyper som användes för texturer och modeller var PNG och COLLADA respektivt och för att läsa filerna användes programbiblioteken \code{assimp} och \code{stb\_image}. 
+	I spelet används texturer och modeller för att rita bakgrunden och rymdskeppen. De sparas i filer på hårddisken så för att programmet ska kunna använda dem måste grafiksystemet kunna läsa filerna. De filtyper som användes för texturer och modeller var PNG och COLLADA respektivt och för att läsa filerna användes programbiblioteken \code{assimp} och \code{stb\_image}. 
 	
-	Näst skrevs tangentbordsinmatningen. Även den här delen behöver kommunicera mycket med operativsystemet men lyckligtvis hanterar \code{SDL} också inmatning. Internt ses tangentbordets knappar som en lista med sant/falskt värden (\code{bool[]}) som uppdateras varje spelcykel. 
+	Näst skrevs tangentbordsinmatningen. Även den här delen behöver kommunicera mycket med operativsystemet men lyckligtvis hanterar \code{SDL} också inmatning. Internt ses tangentbordets knappar helt enkelt som en lista med sant/falskt värden där varje knapp på tangentbordet har ett eget värde. 
 	
-	Vid det här stadiet fanns allt som behövdes för att lägga till skeppen och spelfysiken. Först skapades en datastruktur för skepp som innehåller en positionsvektor, en hastighetsvektor, en rotationsmatris plus en del andra variabler. En datastruktur skapades även för kameran som följer spelarens skepp. Rotationen hanteras med hjälp av en matris då det är lättare att upprepa en rotation på en matris än på eulervinklar vilket blir viktigt då skeppen alltid kommer roteras relativt till deras ursprungliga rotation. Skeppets position beräknas enligt följande ekvation. 
+	Vid det här stadiet fanns allt som behövdes för att lägga till skeppen och spelfysiken. Först skapades en datastruktur för skepp som innehåller en positionsvektor, en hastighetsvektor, en rotationsmatris plus en del andra variabler. Skeppets position beräknas enligt följande ekvation. 
 	
 	\begin{equation}
-		p = p_0 + (\textbf{R} * \vec{f} * s) * \Delta t
+		p = p_0 + (\vec{r} * s) * \Delta t
 	\end{equation}
 	
-	Där $p$ är den nya positionen på skeppet, $p_0$ är skeppets förra position, $\Delta t$ är tidssteget och $s$ är skeppets fart. För att få skeppets nya hastighetsvektor gångras rotationsmatrisen, vilken säger i vilken riktning skeppet är riktat, och gångrar den med en framåtpekande vektor ($\vec{f} = (0, 0, -1)$) och fartskalären $s$. Tidssteget är inte en konstant utan varierar efter hur snabbt eller långsamt datorn spelet körs på är. 
+	Där $p$ är den nya positionen på skeppet, $p_0$ är skeppets förra position och $s$ är skeppets fart. $\Delta t$ är tiden som har gått sedan förra gången positionen ändrades. Hastigheten fås genom att en vektor som pekar i riktningen som skeppet pekar i gångras med en fartskalär. 
 	
-	Efter att skeppen kunde styras skrevs ljudsystemet. SDL bibilioteket tillhandahåller funktioner för att spela ljud men de kan endast spela upp den direkta dataströmmen vilket innebär att alla ljud i spelet skulle behövas kombineras av programmeraren. Dessutom skulle funktioner som ljudförsvagning över avstånd och dopplereffekten läggas till. För att förenkla ljudsystemet användes OpenAL programbiblioteket som simulerar alla nämnda effekter automatiskt. I spelet spelas ett raketljud från varje rymdskepp. Som spelmekanik låter ljudet spelaren veta var de andra skeppen är och hur långt bort de är även när skeppen inte ligger inom spelarens vy. 
+	Efter att skeppen kunde styras skrevs ljudsystemet. SDL bibilioteket kan spela ljud men då det har väldigt få funktioner användes ett annat programbibliotek för ljud. OpenAL användes då det kan simulera många effekter som finns i verkligenheten, till exempel att ljud blir svagare över avstånd och dopplereffekten. I spelet spelas ett raketljud från varje rymdskepp. Som spelmekanik låter ljudet spelaren veta var de andra skeppen är och hur långt bort de är även när skeppen inte ligger inom spelarens vy. 
 	
 	Nästa steg var att lägga till partiklar och skott. I spelet använder både avgaspartiklarna på rymdskeppen och skotten liknande datastrukturer vilket är anledningen till att de implementerades samtidigt. De båda har en textur, en position och en hastighet. Det speciella med partiklar är att när de renderas ska texturen alltid vara riktad mot kameran, då ser partikeln likadan ut från alla vinklar men det försvårar renderingen. Vid det här stadiet kan spelaren skjuta skott men då spelet inte hanterar kollisioner än kan skotten aldrig träffa något. Det skulle åtgärdas senare i arbetet. 
 	
@@ -221,7 +208,9 @@ hela din process och resultat på gymnasiearbetet.
 	\newpage
 	\section{Resultat}
 	
-	Genom arbetet blev det klart att vissa delar tog mycket längre tid än andra, även fast det ursprungligen kan ha verkat lika komplicerade. Till exempel var menysystemet relativt krångligt att implementera. Till att börja med behövde datastrukturer skapas som skulle hålla alla variabler som en meny behövde. I spelet består en meny av saker som text, knappar och annan grafik. En representation av en meny skulle då kunna vara en lista med komponenter där varje komponent är antingen en knapp eller ett stycke text m.m. Problemet var att i implementationen betydde det att flera helt olika typer av komponenter skulle behöva lagras med samma datastruktur. I många programmeringsspråk finns ett koncept som heter arv och som ska hjälpa med sådant. Idéen är att man skapar en klass som innehåller de gemensamma egenskaperna och variablerna som alla komponenter delar (en klass som heter \code{Komponent} t.ex. Sedan skapar man underklasser som ärver egenskaper från den ursprungliga klassen men har kvar sina speciala egenskaper. Sedan kan komponenterna hanteras antingen som instanser av \code{Komponent} klassen eller som instanser av deras specifika klasser, till exempel \code{Knapp} eller \code{Textruta}. Då skulle en meny vara en lista med \code{Komponent} objekt. Tyvärr så har inte C något sådant koncept så en annan lösning användas där alla egenskaper för alla typer av komponenter fanns i en datastruktur och en variabel sade vilka av egenskaper det var som faktiskt gällde. 
+	Spelet har nu alla av de viktiga funktionerna som spelet skulle ha när det var klart enligt den ursprungliga idéen. Vissa funktioner fanns det inte tid för att implementera, till exempel asteroider. Samtidigt lades några nya idéer till som inte fanns i den originella designen så som en radar och sköldar på skeppen. Arbetet gick utan stora problem men även fast många programbibliotek användes som förenklade programmeringen var den delen som tog mest tid just grafik, ljud och inmatningen, det vill säga hårdvarusidan av programmet. Den sidan är just vad en spelmotor sköter åt utvecklaren och därför skulle arbetet gått betydligt snabbare om en spelmotor använts. 
+	
+	Genom arbetet blev det klart att vissa delar tog mycket längre tid än andra, även fast de ursprungligen kan ha verkat lika komplicerade. Till exempel var menysystemet relativt krångligt att implementera. Till att börja med behövde datastrukturer skapas som skulle hålla alla variabler som en meny behövde. I spelet består en meny av saker som text, knappar och annan grafik. En representation av en meny skulle då kunna vara en lista med komponenter där varje komponent är antingen en knapp eller ett stycke text m.m. Problemet var att i implementationen betydde det att flera helt olika typer av komponenter skulle behöva lagras med samma datastruktur. I många programmeringsspråk finns ett koncept som heter arv och som ska hjälpa med sådant. Idéen är att man skapar en klass som innehåller de gemensamma egenskaperna och variablerna som alla komponenter delar (en klass som heter \code{Komponent} t.ex. Sedan skapar man underklasser som ärver egenskaper från den ursprungliga klassen men har kvar sina speciala egenskaper. Sedan kan komponenterna hanteras antingen som instanser av \code{Komponent} klassen eller som instanser av deras specifika klasser, till exempel \code{Knapp} eller \code{Textruta}. Då skulle en meny vara en lista med \code{Komponent} objekt. Tyvärr så har inte C något sådant koncept så en annan lösning användas där alla egenskaper för alla typer av komponenter fanns i en datastruktur och en variabel sade vilka av egenskaper det var som faktiskt gällde. 
 	
 	Medan menyerna tog längre tid att implementera tog andra delar mindre tid än förväntad. Till exempel var ljudsystemet färdigt efter endast några dagar tack vare OpenAL. Inmatningssystemet var färdigt relativt snabbt också. De stora svårigheterna visade sig vara att strukturera upp programmet så att framtida tillägg kunde ackommoderas. Med andra ord, att bygga spelet på ett sätt som tillåter framtida tillägg. Den andra stora svårigheten var just att spelet var i 3D vilket gjorde matematiken betydligt mer komplicerad. 
 	
@@ -239,6 +228,10 @@ nya fakta får framkomma i den här delen.
 	\newpage
 	\section{Diskussion}
 	
+	Under arbetets gång behövde flera idéer tas bort på grund av tidsbrist. Som exempel var det först tänkt att det skulle finnas asteroider som skeppen behövde undvika. Att lägga till dem skulle dock involvera väldigt mycket kollisionskod för situationerna när två asteroider krockar och när skepp kraschar. Då asteroiderna skulle uppskattas som sfärer borde kollisionsupptäckarkoden kunna skrivas relativt snabbt. Dock skulle kollisionsresponsen vara mer komplicerad. Av samma anledning är skepp mot skepp kollisionen inte implementerad i den slutgiltiga versionen av spelet. 
+	
+	Slutsatsen var att eftersom en spelmotor sköter allt som berör datorns hårdvara skulle spelet blivit byggt mycket snabbare om en sådan hade använts. Allt det som tog längst tid i arbetet var sådant som en spelmotor skulle ge utvecklaren gratis. Utvecklaren skulle inte behöva oroa sig om att strukturera programmet på ett vettigt vis, detaljerna i att rendera delarna och all matematik som går in i att bygga spelet i 3D. Att bygga ett spel utan en färdig spelmotor kan dock låta spelutvecklaren att lättare lägga till vissa mer ovanliga funktioner men den stora majoriteten av spel kräver inget som en modern spelmotor inte klarar av. 
+	
 	\begin{small}
 		Reflektera kring dina slutsatser på ett åskådligt och övertygande sätt genom
 att kommentera de slutsatser du kommit fram till och beskrivit under rubriken
@@ -253,10 +246,14 @@ inledningen.
 	
 	\newpage
 	\section{Källhänvisningar}
-	Skolverket?
-	Stack overflow
-	cplusplus.com
-	opengl.com
-	Programbiblioteken?
+	Hemsidor med dokumentation som har använts någon gång under 2016-2017: \\
+	\begin{quote}
+		\textbf{Organisation/Företag \hfill Hemsida} \\
+		Khronos group \hfill www.opengl.org \\
+		Stack overflow \hfill www.stackoverflow.com \\
+		- \hfill www.cplusplus.com \\
+		- \hfill www.assimp.org \\
+		- \hfill www.libsdl.org \\
+	\end{quote}
 	
 \end{document}
