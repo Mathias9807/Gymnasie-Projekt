@@ -16,7 +16,7 @@
 #include "v_opengl.h"
 
 
-Menu mainMenu = {0}, inGameMenu = {0};
+Menu mainMenu = {0}, inGameMenu = {0}, respawnMenu = {0};
 Menu* GUI_currentMenu = NULL;
 
 // Modellen som används för att rita ut rektanglar
@@ -34,6 +34,15 @@ void GUI_OpenMainMenu() {
 }
 void GUI_Play() {
 	G_SetupFFA(true, 12);
+	GUI_ChangeMenu(&inGameMenu);
+}
+void GUI_OpenRespawnMenu() {
+	GUI_ChangeMenu(&respawnMenu);
+}
+void SpawnPlayer() {
+	G_player = G_AddShip((vec3) {0, 5, 50}, NULL, NULL, &G_playerAi);
+	G_player->onDeath = GUI_OpenRespawnMenu;
+	V_SetCameraFocus(G_player);
 	GUI_ChangeMenu(&inGameMenu);
 }
 
@@ -67,6 +76,26 @@ void GUI_Init() {
 		inGameMenu.focusGrabbed = false;
 
 		GUI_CreateRadar(&inGameMenu);
+	}
+
+	// Skapa respawn menyn
+	{
+		respawnMenu.focusGrabbed = false;
+
+		MenuComp* ply, *quit;
+
+		GUI_CreateLabel(&respawnMenu, "You Died!",
+				(vec2) {0.5, 0.2}, 0.07, true);
+
+		ply = GUI_CreateLabel(&respawnMenu,
+				"Respawn", (vec2) {0.5, 0.45}, 0.05, true);
+		quit = GUI_CreateLabel(&respawnMenu,
+				"Quit", (vec2) {0.5, 0.6}, 0.05, true);
+
+		GUI_CompAddAction(ply, SpawnPlayer);
+		GUI_CompAddAction(quit, SYS_Quit);
+
+		GUI_CreateSelector(&respawnMenu);
 	}
 }
 

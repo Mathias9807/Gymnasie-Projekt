@@ -68,6 +68,7 @@ void GUI_CompAddAction(MenuComp* c, void (*action)());
 
 void GUI_OpenInGameMenu();
 void GUI_OpenMainMenu();
+void GUI_OpenRespawnMenu();
 void GUI_Play();
 
 MenuComp* GUI_CreateSelector(Menu* m);

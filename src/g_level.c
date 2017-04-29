@@ -8,6 +8,7 @@
  */
 
 #include "g_level.h"
+#include "gui_main.h"
 #include "v_main.h"
 
 
@@ -56,6 +57,7 @@ void G_SetupFFA(bool player, int others) {
 
 	if (player) {
 		G_player = G_AddShip((vec3) {0, 5, 50}, NULL, NULL, &G_playerAi);
+		G_player->onDeath = GUI_OpenRespawnMenu;
 		V_SetCameraFocus(G_player);
 	}
 
