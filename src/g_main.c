@@ -47,6 +47,17 @@ void G_Tick() {
 	// Stäng ner programmet vid begäran
 	if (SYS_keys[IN_QUIT]) SYS_running = false;
 
+	// Timern som skapar nya skepp
+	static double spawnTimer = 0;
+	if (spawnTimer == 0) spawnTimer = SYS_GetTime();
+	if (GUI_currentMenu == &GUI_inGameMenu && spawnTimer + 10 < SYS_GetTime()) {
+		spawnTimer = SYS_GetTime();
+
+		float angle = (float) rand() / RAND_MAX * 2 * M_PI;
+		float x = cos(angle), z = sin(angle);
+		G_AddShip((vec3) {50 * x, rand() % 20, 50 * z}, NULL, NULL, &G_stupidAi);
+	}
+
 	// Kör de individuella skeppens logik
 	for (int i = 0; i < G_ships.size; i++) {
 		Ship* s = ListGet(&G_ships, i);
@@ -78,7 +89,7 @@ void G_Tick() {
 					s->ai->die(s);
 
 					// 'die' ska bara köras en gång
-					// Därför sätts nollas s->ai
+					// Därför nollas s->ai
 					s->ai = NULL;
 					s->invisible = true;
 				}

@@ -16,7 +16,7 @@
 #include "v_opengl.h"
 
 
-Menu mainMenu = {0}, inGameMenu = {0}, respawnMenu = {0};
+Menu GUI_mainMenu = {0}, GUI_inGameMenu = {0}, GUI_respawnMenu = {0};
 Menu* GUI_currentMenu = NULL;
 
 // Modellen som används för att rita ut rektanglar
@@ -26,24 +26,24 @@ int dot, redDot;
 extern int abstractBox;
 
 void GUI_OpenInGameMenu() {
-	GUI_ChangeMenu(&inGameMenu);
+	GUI_ChangeMenu(&GUI_inGameMenu);
 }
 void GUI_OpenMainMenu() {
 	G_SetupDemoLevel();
-	GUI_ChangeMenu(&mainMenu);
+	GUI_ChangeMenu(&GUI_mainMenu);
 }
 void GUI_Play() {
 	G_SetupFFA(true, 12);
-	GUI_ChangeMenu(&inGameMenu);
+	GUI_ChangeMenu(&GUI_inGameMenu);
 }
 void GUI_OpenRespawnMenu() {
-	GUI_ChangeMenu(&respawnMenu);
+	GUI_ChangeMenu(&GUI_respawnMenu);
 }
 void SpawnPlayer() {
 	G_player = G_AddShip((vec3) {0, 5, 50}, NULL, NULL, &G_playerAi);
 	G_player->onDeath = GUI_OpenRespawnMenu;
 	V_SetCameraFocus(G_player);
-	GUI_ChangeMenu(&inGameMenu);
+	GUI_ChangeMenu(&GUI_inGameMenu);
 }
 
 void GUI_Init() {
@@ -52,50 +52,50 @@ void GUI_Init() {
 
 	// Skapa huvud menyn
 	{
-		mainMenu.focusGrabbed = true;
+		GUI_mainMenu.focusGrabbed = true;
 		MenuComp* ply, *ctr, *stp;
-		GUI_CreateLabel(&mainMenu, "Space game",
+		GUI_CreateLabel(&GUI_mainMenu, "Space game",
 				(vec2) {0.5, 0.1}, 0.06, true);
 
-		ply = GUI_CreateLabel(&mainMenu,
+		ply = GUI_CreateLabel(&GUI_mainMenu,
 				"Play", (vec2) {0.5, 0.4}, 0.04, true);
-		ctr = GUI_CreateLabel(&mainMenu,
+		ctr = GUI_CreateLabel(&GUI_mainMenu,
 				"Controls", (vec2) {0.5, 0.5}, 0.04, true);
-		stp = GUI_CreateLabel(&mainMenu,
+		stp = GUI_CreateLabel(&GUI_mainMenu,
 				"Quit", (vec2) {0.5, 0.6}, 0.04, true);
 
 		GUI_CompAddAction(ply, GUI_Play);
 		GUI_CompAddAction(ctr, NULL);
 		GUI_CompAddAction(stp, SYS_Quit);
 
-		GUI_CreateSelector(&mainMenu);
+		GUI_CreateSelector(&GUI_mainMenu);
 	}
 
 	// Skapa menyn som visas under gameplay
 	{
-		inGameMenu.focusGrabbed = false;
+		GUI_inGameMenu.focusGrabbed = false;
 
-		GUI_CreateRadar(&inGameMenu);
+		GUI_CreateRadar(&GUI_inGameMenu);
 	}
 
 	// Skapa respawn menyn
 	{
-		respawnMenu.focusGrabbed = false;
+		GUI_respawnMenu.focusGrabbed = false;
 
 		MenuComp* ply, *quit;
 
-		GUI_CreateLabel(&respawnMenu, "You Died!",
+		GUI_CreateLabel(&GUI_respawnMenu, "You Died!",
 				(vec2) {0.5, 0.2}, 0.07, true);
 
-		ply = GUI_CreateLabel(&respawnMenu,
+		ply = GUI_CreateLabel(&GUI_respawnMenu,
 				"Respawn", (vec2) {0.5, 0.45}, 0.05, true);
-		quit = GUI_CreateLabel(&respawnMenu,
+		quit = GUI_CreateLabel(&GUI_respawnMenu,
 				"Quit", (vec2) {0.5, 0.6}, 0.05, true);
 
 		GUI_CompAddAction(ply, SpawnPlayer);
 		GUI_CompAddAction(quit, SYS_Quit);
 
-		GUI_CreateSelector(&respawnMenu);
+		GUI_CreateSelector(&GUI_respawnMenu);
 	}
 }
 

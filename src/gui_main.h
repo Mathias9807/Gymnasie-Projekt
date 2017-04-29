@@ -57,6 +57,7 @@ typedef struct {
 
 extern Menu*		GUI_currentMenu;
 extern bool		GUI_focusGrabbed;
+extern Menu		GUI_mainMenu, GUI_inGameMenu, GUI_respawnMenu;
 
 
 void GUI_Init();
