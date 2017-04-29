@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.0])
-AC_INIT([Space], [0.1], [mathias9807@gmail.com])
+AC_INIT([Space], [1.0], [mathias9807@gmail.com])
 AM_INIT_AUTOMAKE([subdir-objects])
 
 # Checks for programs.
