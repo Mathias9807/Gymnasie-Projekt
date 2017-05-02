@@ -50,6 +50,8 @@ struct Ship {
 	float baseSpeed;
 
 	int health, maxHealth; // Skeppets HP
+	bool colored; vec3 color; // Skeppets specifika färg
+
 	vec3 shieldHit; // Koordinaten rel till skeppet där det träffades senast
 	double shieldTime; // Tiden då den träffades senast
 	Ship* target; // Används för AI:n
@@ -120,6 +122,7 @@ void G_Tick();
 // 	Ai* ai		The ai of the created ship or NULL
 //
 Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai);
+void G_SetShipColor(Ship* s, vec3 color);
 void G_DeleteShip(Ship* s);
 void G_RotateShip(Ship* s, float x, float y, float z);
 void G_ShipExhaust(Ship* s, vec3 offs, double* lastExhaust);

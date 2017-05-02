@@ -19,7 +19,7 @@ Camera* camera;
 
 vec2 parallaxShift;
 
-Model* ship, * cube, * shield, * blaster;
+Model* ship, * shipColor, * cube, * shield, * blaster;
 Model* plane;
 Model* unitPlane;
 Model* billboard;
@@ -34,6 +34,7 @@ int crosshair1, crosshair2;
 
 void LoadResources() {
 	ship = V_LoadModel("res/Ship/Ship.dae");
+	shipColor = V_LoadModel("res/Ship/Color.dae");
 	cube = V_LoadModel("res/cube.dae");
 	shield = V_LoadModel("res/Shield.dae");
 	plane = V_LoadModel("res/Plane.dae");
@@ -71,6 +72,7 @@ void V_Init() {
 	V_SetShader(shader);
 	V_SetParam1i("diffuse_tex", 0);
 	V_SetParam1f("overrideAlpha", -1);
+	V_SetParam3f("overrideColor", -1, -1, -1);
 
 	V_SetDepthTesting(true);
 
@@ -172,7 +174,13 @@ void V_Tick() {
 			s->pOffs[0], s->pOffs[1], s->pOffs[2]);
 		mat4x4_rotate_Z(V_modelMat, V_modelMat, s->zOffs);
 
+		V_SetParam3f("overrideColor", -1, -1, -1);
 		V_RenderModel(ship);
+		if (s->colored) {
+			V_SetParam3f("overrideColor", s->color[0], s->color[1],
+				s->color[2]);
+			V_RenderModel(shipColor);
+		}
 	}
 
 	// Rita sköldarna

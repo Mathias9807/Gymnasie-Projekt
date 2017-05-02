@@ -207,7 +207,14 @@ Ship* G_AddShip(vec3 p, vec3 v, mat4x4 r, Ai* ai) {
 	s->source = S_CreateSource(s);
 	S_PlayClip(&S_rockets, s->source, true);
 
+	G_SetShipColor(s, (vec3) {(float) rand() / RAND_MAX, (float) rand() / RAND_MAX, (float) rand() / RAND_MAX});
+
 	return s;
+}
+
+void G_SetShipColor(Ship* s, vec3 color) {
+	s->colored = true;
+	memcpy(s->color, color, sizeof(vec3));
 }
 
 void G_DeleteShip(Ship* s) {
